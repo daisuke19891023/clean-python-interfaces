@@ -9,14 +9,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 from structlog.types import EventDict
 
-from test_project.utils.otel_exporter import (
+from clean_interfaces.utils.otel_exporter import (
     FileLogExporter,
     LogExporter,
     LogExporterFactory,
     OTLPLogExporter,
     StructlogOTelProcessor,
 )
-from test_project.utils.settings import LoggingSettings, OTelExportMode
+from clean_interfaces.utils.settings import LoggingSettings, OTelExportMode
 
 
 class TestLogExporterInterface:
@@ -117,19 +117,21 @@ class TestOTLPLogExporter:
     def test_otlp_exporter_initialization(self) -> None:
         """Test OTLPLogExporter initialization."""
         with (
-            patch("test_project.utils.otel_exporter._otel_available", new=True),
+            patch("clean_interfaces.utils.otel_exporter._otel_available", new=True),
             patch(
-                "test_project.utils.otel_exporter.socket.socket",
+                "clean_interfaces.utils.otel_exporter.socket.socket",
             ) as mock_socket_class,
-            patch("test_project.utils.otel_exporter.Resource") as mock_resource_class,
             patch(
-                "test_project.utils.otel_exporter.BatchLogRecordProcessor",
+                "clean_interfaces.utils.otel_exporter.Resource",
+            ) as mock_resource_class,
+            patch(
+                "clean_interfaces.utils.otel_exporter.BatchLogRecordProcessor",
             ) as mock_batch_processor_class,
             patch(
-                "test_project.utils.otel_exporter.LoggerProvider",
+                "clean_interfaces.utils.otel_exporter.LoggerProvider",
             ) as mock_logger_provider_class,
             patch(
-                "test_project.utils.otel_exporter.OTLPLogsExporter",
+                "clean_interfaces.utils.otel_exporter.OTLPLogsExporter",
             ) as mock_otlp_class,
         ):
             # Mock successful connection
@@ -159,9 +161,9 @@ class TestOTLPLogExporter:
             assert call_kwargs["endpoint"] == "http://localhost:4317"
             assert call_kwargs["timeout"] == 5
 
-    @patch("test_project.utils.otel_exporter.socket.socket")
-    @patch("test_project.utils.otel_exporter.OTLPLogsExporter")
-    @patch("test_project.utils.otel_exporter.LoggerProvider")
+    @patch("clean_interfaces.utils.otel_exporter.socket.socket")
+    @patch("clean_interfaces.utils.otel_exporter.OTLPLogsExporter")
+    @patch("clean_interfaces.utils.otel_exporter.LoggerProvider")
     def test_otlp_exporter_export(
         self,
         mock_logger_provider_class: MagicMock,
@@ -203,8 +205,8 @@ class TestOTLPLogExporter:
         assert call_args.args[0] == "Test OTLP message"
         assert call_args.kwargs["extra"]["attributes"]["user_id"] == "user123"
 
-    @patch("test_project.utils.otel_exporter.socket.socket")
-    @patch("test_project.utils.otel_exporter.OTLPLogsExporter")
+    @patch("clean_interfaces.utils.otel_exporter.socket.socket")
+    @patch("clean_interfaces.utils.otel_exporter.OTLPLogsExporter")
     def test_otlp_exporter_shutdown(
         self,
         mock_otlp_class: MagicMock,
@@ -221,7 +223,7 @@ class TestOTLPLogExporter:
 
         # Need to mock LoggerProvider to test shutdown
         with patch(
-            "test_project.utils.otel_exporter.LoggerProvider",
+            "clean_interfaces.utils.otel_exporter.LoggerProvider",
         ) as mock_provider_class:
             mock_provider = MagicMock()
             mock_provider_class.return_value = mock_provider
@@ -256,7 +258,7 @@ class TestLogExporterFactory:
             otel_service_name="test-svc",
         )
 
-        with patch("test_project.utils.otel_exporter.OTLPLogsExporter"):
+        with patch("clean_interfaces.utils.otel_exporter.OTLPLogsExporter"):
             exporters = LogExporterFactory.create(settings)
 
         assert len(exporters) == 1
@@ -270,7 +272,7 @@ class TestLogExporterFactory:
             otel_endpoint="http://otel:4317",
         )
 
-        with patch("test_project.utils.otel_exporter.OTLPLogsExporter"):
+        with patch("clean_interfaces.utils.otel_exporter.OTLPLogsExporter"):
             exporters = LogExporterFactory.create(settings)
 
         assert len(exporters) == 2

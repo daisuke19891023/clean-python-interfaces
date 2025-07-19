@@ -19,11 +19,11 @@ from typing import Any, Protocol, TypeVar
 import structlog
 from structlog.types import EventDict, Processor
 
-from test_project.utils.otel_exporter import (
+from clean_interfaces.utils.otel_exporter import (
     LogExporterFactory,
     StructlogOTelProcessor,
 )
-from test_project.utils.settings import get_settings
+from clean_interfaces.utils.settings import get_settings
 
 # Type variables for decorators
 F = TypeVar("F", bound=Callable[..., Any])

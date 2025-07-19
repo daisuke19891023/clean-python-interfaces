@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from test_project.utils.settings import LoggingSettings, OTelExportMode
+from clean_interfaces.utils.settings import LoggingSettings, OTelExportMode
 
 
 class TestLoggingSettings:

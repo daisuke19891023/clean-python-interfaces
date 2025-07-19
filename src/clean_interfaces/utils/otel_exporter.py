@@ -14,7 +14,7 @@ from typing import Any
 import structlog
 from structlog.types import EventDict
 
-from test_project.utils.settings import LoggingSettings, OTelExportMode
+from clean_interfaces.utils.settings import LoggingSettings, OTelExportMode
 
 # Type checking workaround for OpenTelemetry imports
 # Lazy imports to avoid import-time freezing issues

@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 import pytest
 import yaml
 
-from test_project.utils.file_handler import (
+from clean_interfaces.utils.file_handler import (
     FileHandler,
     read_json,
     read_text,
@@ -290,7 +290,7 @@ class TestErrorHandlingWithLogging:
     """Test error handling and logging integration."""
 
     @pytest.mark.skip(reason="Mock logger is created at module import time")
-    @patch("test_project.utils.file_handler.logger")
+    @patch("clean_interfaces.utils.file_handler.logger")
     def test_read_text_logs_file_not_found(
         self,
         mock_logger: Mock,
@@ -313,7 +313,7 @@ class TestErrorHandlingWithLogging:
         sample_files: dict[str, Path],
     ) -> None:
         """Test that UnicodeDecodeError is logged."""
-        with patch("test_project.utils.file_handler.logger") as mock_logger:
+        with patch("clean_interfaces.utils.file_handler.logger") as mock_logger:
             # Force a decode error by using wrong encoding
             utf8_file = sample_files["utf8_text"]
             # Read UTF-8 file with CP932 encoding should fail
@@ -333,7 +333,7 @@ class TestErrorHandlingWithLogging:
         temp_dir: Path,
     ) -> None:
         """Test that TypeError from JSON serialization is logged."""
-        with patch("test_project.utils.file_handler.logger") as mock_logger:
+        with patch("clean_interfaces.utils.file_handler.logger") as mock_logger:
             handler = FileHandler()
             test_path = temp_dir / "error.json"
 
@@ -350,7 +350,7 @@ class TestErrorHandlingWithLogging:
             error_msg = mock_logger.error.call_args[0][0]
             assert "Failed to serialize data to JSON" in error_msg
 
-    @patch("test_project.utils.file_handler.logger")
+    @patch("clean_interfaces.utils.file_handler.logger")
     def test_successful_operations_logged(
         self,
         mock_logger: Mock,

@@ -11,7 +11,7 @@ from typing import Any, Literal
 
 import yaml
 
-from test_project.utils.logger import get_logger
+from clean_interfaces.utils.logger import get_logger
 
 logger = get_logger(__name__)
 

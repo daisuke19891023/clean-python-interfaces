@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from test_project.utils.logger import configure_logging, get_logger, log_performance
+from clean_interfaces.utils.logger import configure_logging, get_logger, log_performance
 
 # Test constants
 EXPECTED_DURATION_150 = 150

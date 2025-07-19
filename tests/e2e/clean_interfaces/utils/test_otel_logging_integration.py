@@ -11,8 +11,8 @@ from typing import Any, ClassVar
 
 import pytest
 
-from test_project.utils.logger import configure_logging, get_logger
-from test_project.utils.settings import LoggingSettings
+from clean_interfaces.utils.logger import configure_logging, get_logger
+from clean_interfaces.utils.settings import LoggingSettings
 
 
 class MockOTLPServer:

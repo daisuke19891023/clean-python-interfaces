@@ -1,5 +1,5 @@
 [project]
-name = "testproject"
+name = "clean-interfaces"
 version = "0.1.0"
 description = "A test project for verification"
 readme = "README.md"
@@ -17,7 +17,7 @@ dependencies = [
 ] # Populated by user or later steps if needed
 
 [project.scripts]
-testproject = "test_project.main:main"
+clean-interfaces = "clean_interfaces.main:main"
 
 [project.optional-dependencies]
 docs = [
@@ -94,6 +94,7 @@ ignore = [
      "BLE001",  # Broad exception handling needed for optional dependencies
      "PLC0415",  # Conditional imports needed for optional dependencies
      "TRY400",  # Use logger.error instead of logger.exception for structlog compatibility
+     "EXE002",  # File is executable but no shebang (permission issues in container)
  ]
  # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -140,7 +141,7 @@ reportMissingTypeStubs = false
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-addopts = "-v --cov=src/test_project -ra --strict-markers" # This will be replaced by setup.sh
+addopts = "-v --cov=src/clean_interfaces -ra --strict-markers" # This will be replaced by setup.sh
 markers = [
   "slow: marks tests as slow (deselect with '-m \"not slow\"')",
   "integration: marks integration tests"
