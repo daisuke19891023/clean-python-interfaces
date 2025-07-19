@@ -14,7 +14,7 @@ click==8.2.1
     # via mkdocs
 colorama==0.4.6
     # via mkdocs-material
-coverage==7.9.1
+coverage==7.9.2
     # via pytest-cov
 diff-cover==9.3.2
     # via test-project-alpha (pyproject.toml)
