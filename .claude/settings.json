@@ -1,0 +1,74 @@
+{
+    "permissions": {
+        "allow": [
+            "WebFetch(domain:github.com)",
+            "Bash(mkdir:*)",
+            "Bash(nox:*)",
+            "Bash(uv sync:*)",
+            "Bash(python:*)",
+            "Bash(source:*)",
+            "Bash(grep:*)",
+            "Bash(sudo uv:*)",
+            "Bash(find:*)",
+            "Bash(sudo rm:*)",
+            "Bash(uv venv:*)",
+            "Bash(ls:*)",
+            "Bash(rm:*)",
+            "Bash(uv run nox:*)",
+            "Bash(uv run ruff check:*)",
+            "Bash(cp:*)",
+            "Bash(uv run pytest:*)",
+            "Bash(git add:*)",
+            "Bash(chmod:*)",
+            "Bash(touch:*)",
+            "Bash(git commit:*)",
+            "Bash(git pull:*)",
+            "Bash(git push:*)",
+            "Bash(git update-index:*)"
+        ],
+        "deny": []
+    },
+    "env": {
+        "BASH_MAX_TIMEOUT_MS": 3600000,
+        "DISABLE_TELEMETRY":1,
+        "MAX_THINKING_TOKENS": "31999"
+
+
+    },
+    "hooks": {
+        "PostToolUse": [
+            {
+                "matcher": "Write|Edit|MultiEdit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "/workspace/.claude/hooks/python_quality_check.sh",
+                        "decision": "block"
+                    }
+                ]
+            }
+        ],
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": ".claude/hooks/python_final_quality_check.sh",
+                        "decision": "block"
+                    }
+                ]
+            }
+        ],
+        "SubagentStop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "/workspace/.claude/hooks/python_final_quality_check.sh",
+                        "decision": "block"
+                    }
+                ]
+            }
+        ]
+    }
+}
