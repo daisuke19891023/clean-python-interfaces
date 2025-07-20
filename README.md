@@ -295,6 +295,28 @@ The pre-commit hooks use nox to ensure consistency with the project's configurat
 
 All hooks respect the configuration in `pyproject.toml`, ensuring no divergence between pre-commit and regular development commands.
 
+### Testing Helpers
+
+This project includes testing helpers to make debugging easier:
+
+#### Pexpect Debug Helper
+
+For E2E tests using pexpect, use the debug helper:
+
+```python
+from tests.helpers.pexpect_debug import run_cli_with_debug
+
+# Run with debug output enabled
+output, exitstatus = run_cli_with_debug(
+    "python -m clean_interfaces.main --help",
+    env=clean_env,
+    timeout=10,
+    debug=True,  # Enable debug output
+)
+```
+
+Enable debug mode in CI by setting `PYTEST_DEBUG=1` environment variable.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
