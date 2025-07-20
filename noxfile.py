@@ -124,7 +124,15 @@ def docs_sphinx(session: Session) -> None:
     """Build API documentation with Sphinx."""
     session.install("-c", constraints(session).as_posix(), ".[docs]")
     session.cd("docs")
-    session.run("sphinx-build", "-b", "html", "source", "build/html", "-W", "--keep-going")
+    session.run(
+        "sphinx-build",
+        "-b",
+        "html",
+        "source",
+        "build/html",
+        "-W",
+        "--keep-going",
+    )
     session.log("Sphinx documentation built in docs/build/html/")
 
 

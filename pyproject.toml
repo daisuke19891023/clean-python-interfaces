@@ -45,7 +45,8 @@ dev = [
     "py-spy>=0.3.0",
     "scalene>=1.5.0",
     "hatch>=1.8.0",
-    "pdm>=2.12.0"
+    "pdm>=2.12.0",
+    "pre-commit>=4.2.0",
 ]
 
 [tool.uv]
@@ -99,6 +100,7 @@ ignore = [
      "PLC0415",  # Conditional imports needed for optional dependencies
      "TRY400",  # Use logger.error instead of logger.exception for structlog compatibility
      "EXE002",  # File is executable but no shebang (permission issues in container)
+     "N802",  # Allow uppercase function names for HTTP handler methods (do_POST, do_GET)
  ]
  # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -151,4 +153,6 @@ markers = [
   "slow: marks tests as slow (deselect with '-m \"not slow\"')",
   "integration: marks integration tests"
 ]
+
+# [dependency-groups] section removed - all dev dependencies are in [project.optional-dependencies.dev]
 

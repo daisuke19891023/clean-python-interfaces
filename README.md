@@ -264,6 +264,37 @@ uv run mkdocs serve
 - Update documentation as needed
 - Add tests for new features
 
+### Pre-commit Setup
+
+This project uses pre-commit hooks to ensure code quality. The hooks run automatically before each commit.
+
+#### Installation
+
+```bash
+# Install pre-commit hooks
+uv run pre-commit install
+```
+
+#### Manual Run
+
+```bash
+# Run on all files
+uv run pre-commit run --all-files
+
+# Run on staged files only
+uv run pre-commit run
+```
+
+#### Hook Configuration
+
+The pre-commit hooks use nox to ensure consistency with the project's configuration:
+
+- **ruff format**: Formats code according to `pyproject.toml` settings
+- **ruff lint**: Checks and fixes linting issues based on `pyproject.toml` rules  
+- **pyright**: Type checks the code using project settings
+
+All hooks respect the configuration in `pyproject.toml`, ensuring no divergence between pre-commit and regular development commands.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
