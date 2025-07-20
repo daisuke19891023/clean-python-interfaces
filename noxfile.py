@@ -119,6 +119,22 @@ def docs(session: Session) -> None:
     session.run("mkdocs", "build", "--strict")
 
 
+@nox.session(python=["3.12"], tags=["docs"])
+def docs_sphinx(session: Session) -> None:
+    """Build API documentation with Sphinx."""
+    session.install("-c", constraints(session).as_posix(), ".[docs]")
+    session.cd("docs")
+    session.run("sphinx-build", "-b", "html", "source", "build/html", "-W", "--keep-going")
+    session.log("Sphinx documentation built in docs/build/html/")
+
+
+@nox.session(python=["3.12"], tags=["docs"])
+def docs_serve(session: Session) -> None:
+    """Serve MkDocs documentation locally."""
+    session.install("-c", constraints(session).as_posix(), ".[docs]")
+    session.run("mkdocs", "serve")
+
+
 @nox.session(python=["3.12"], tags=["ci"])
 def ci(session: Session) -> None:
     """Run all CI checks: lint, format, typing, test, security."""

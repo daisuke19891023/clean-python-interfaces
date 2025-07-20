@@ -1,10 +1,6 @@
-
-
 from typing import Any
 
 class Config:
-
-
     LOGGING_CONFIG: dict[str, Any]
 
 config: Config

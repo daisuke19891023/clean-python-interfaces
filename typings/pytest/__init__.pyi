@@ -1,5 +1,3 @@
-
-
 from collections.abc import Callable
 from contextlib import AbstractContextManager
 from typing import Any, overload
@@ -41,8 +39,6 @@ class MonkeyPatch:
     def delattr(self, target: Any, name: str) -> None: ...
 
 class LogRecord:
-
-
     levelname: str
     message: str
     msg: str

@@ -1,12 +1,8 @@
-
-
 from typing import Any
 
 import httpx
 
 class TestClient:
-
-
     def __init__(self, app: Any, **kwargs: Any) -> None: ...
     def get(
         self,
