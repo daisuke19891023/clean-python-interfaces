@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Example usage of the OpenTelemetry-enabled logger."""
 # ruff: noqa: T201, D401, S108
 

@@ -99,6 +99,7 @@ ignore = [
      "BLE001",  # Broad exception handling needed for optional dependencies
      "PLC0415",  # Conditional imports needed for optional dependencies
      "TRY400",  # Use logger.error instead of logger.exception for structlog compatibility
+     "EXE001",  # Shebang present but file not executable (Git permission sync issues)
      "EXE002",  # File is executable but no shebang (permission issues in container)
      "N802",  # Allow uppercase function names for HTTP handler methods (do_POST, do_GET)
  ]
