@@ -1,7 +1,7 @@
 """Sphinx configuration file for Clean Interfaces documentation."""
 
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Add the project root to the Python path
@@ -10,7 +10,7 @@ sys.path.insert(0, str(project_root / "src"))
 
 # Project information
 project = "Clean Interfaces"
-copyright = f"{datetime.now().year}, Daisuke Okamoto"
+copyright = f"{datetime.now(tz=UTC).year}, Daisuke Okamoto"  # noqa: A001
 author = "Daisuke Okamoto"
 release = "0.1.0"
 
@@ -32,7 +32,8 @@ exclude_patterns = []
 html_theme = "alabaster"
 html_static_path = ["_static"]
 html_theme_options = {
-    "description": "A flexible Python application framework with multiple interface types",
+    "description": "A flexible Python application framework "
+    "with multiple interface types",
     "github_user": "your-username",
     "github_repo": "clean-interfaces",
     "fixed_sidebar": True,
