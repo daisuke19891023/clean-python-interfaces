@@ -24,9 +24,26 @@ def main(
     ] = None,
 ) -> NoReturn:
     """Execute the main function with optional dotenv file."""
-    # Clear sys.argv to prevent CLI interface from processing our arguments
+    # Save original argv
     original_argv = sys.argv
-    sys.argv = [sys.argv[0]]  # Keep only the script name
+
+    # Remove main.py's own options from sys.argv so they don't interfere with CLI
+    # Keep script name and any args that aren't --dotenv/-e related
+    new_argv = [sys.argv[0]]
+    i = 1
+    while i < len(sys.argv):
+        if sys.argv[i] in ("--dotenv", "-e"):
+            # Skip this option and its value
+            i += 2
+        elif sys.argv[i].startswith("--dotenv="):
+            # Skip this option
+            i += 1
+        else:
+            # Keep this argument for the CLI interface
+            new_argv.append(sys.argv[i])
+            i += 1
+
+    sys.argv = new_argv
 
     try:
         run_app(dotenv_path=dotenv)
