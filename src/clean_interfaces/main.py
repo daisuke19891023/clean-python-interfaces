@@ -4,13 +4,12 @@
 import sys
 from typing import NoReturn
 
+from clean_interfaces.app import run_app
+
 
 def main() -> NoReturn:
     """Execute the main function."""
-    import logging
-
-    logger = logging.getLogger(__name__)
-    logger.info("Hello from clean_interfaces!")
+    run_app()
     sys.exit(0)
 
 

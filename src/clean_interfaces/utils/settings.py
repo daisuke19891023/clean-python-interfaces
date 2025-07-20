@@ -111,8 +111,47 @@ class LoggingSettings(BaseSettings):
         return data
 
 
+class InterfaceSettings(BaseSettings):
+    """Interface configuration settings."""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+    )
+
+    interface_type: str = Field(
+        default="cli",
+        description="Type of interface to use (cli, api, gui)",
+    )
+
+    @field_validator("interface_type")
+    @classmethod
+    def validate_interface_type(cls, v: str) -> str:
+        """Validate interface type value."""
+        from clean_interfaces.types import InterfaceType
+
+        try:
+            # Validate that it's a valid interface type
+            InterfaceType(v.lower())
+            return v.lower()
+        except ValueError:
+            valid_types = [t.value for t in InterfaceType]
+            msg = f"Invalid interface type: {v}. Must be one of {valid_types}"
+            raise ValueError(msg) from None
+
+    @property
+    def interface_type_enum(self) -> Any:
+        """Get interface type as enum."""
+        from clean_interfaces.types import InterfaceType
+
+        return InterfaceType(self.interface_type)
+
+
 # Create a singleton instance for easy access
 _settings_instance: LoggingSettings | None = None
+_interface_settings_instance: InterfaceSettings | None = None
 
 
 def get_settings() -> LoggingSettings:
@@ -135,3 +174,25 @@ def reset_settings() -> None:
     """
     global _settings_instance  # noqa: PLW0603
     _settings_instance = None
+
+
+def get_interface_settings() -> InterfaceSettings:
+    """Get the global interface settings instance.
+
+    Returns:
+        InterfaceSettings: The interface settings instance
+
+    """
+    global _interface_settings_instance  # noqa: PLW0603
+    if _interface_settings_instance is None:
+        _interface_settings_instance = InterfaceSettings()
+    return _interface_settings_instance
+
+
+def reset_interface_settings() -> None:
+    """Reset the global interface settings instance.
+
+    This is mainly useful for testing.
+    """
+    global _interface_settings_instance  # noqa: PLW0603
+    _interface_settings_instance = None

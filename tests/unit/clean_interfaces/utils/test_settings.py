@@ -6,7 +6,10 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from clean_interfaces.utils.settings import LoggingSettings, OTelExportMode
+from clean_interfaces.utils.settings import (
+    LoggingSettings,
+    OTelExportMode,
+)
 
 
 class TestLoggingSettings:
@@ -186,3 +189,63 @@ class TestLoggingSettings:
         finally:
             os.environ.pop("LOG_LEVEL", None)
             os.environ.pop("OTEL_LOGS_EXPORT_MODE", None)
+
+
+class TestInterfaceSettings:
+    """Test interface settings functionality."""
+
+    def test_default_interface_type(self) -> None:
+        """Test default interface type is CLI."""
+        from clean_interfaces.types import InterfaceType
+        from clean_interfaces.utils.settings import InterfaceSettings
+
+        settings = InterfaceSettings()
+        assert settings.interface_type == "cli"
+        assert settings.interface_type_enum == InterfaceType.CLI
+
+    def test_interface_type_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test interface type can be set from environment variable."""
+        from clean_interfaces.types import InterfaceType
+        from clean_interfaces.utils.settings import InterfaceSettings
+
+        monkeypatch.setenv("INTERFACE_TYPE", "cli")
+        settings = InterfaceSettings()
+        assert settings.interface_type == "cli"
+        assert settings.interface_type_enum == InterfaceType.CLI
+
+    def test_invalid_interface_type_raises_error(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test invalid interface type raises validation error."""
+        from clean_interfaces.utils.settings import InterfaceSettings
+
+        monkeypatch.setenv("INTERFACE_TYPE", "invalid")
+        with pytest.raises(ValueError, match="Invalid interface type"):
+            InterfaceSettings()
+
+    def test_get_interface_settings_singleton(self) -> None:
+        """Test get_interface_settings returns singleton instance."""
+        from clean_interfaces.utils.settings import (
+            get_interface_settings,
+            reset_interface_settings,
+        )
+
+        # Reset first to ensure clean state
+        reset_interface_settings()
+
+        settings1 = get_interface_settings()
+        settings2 = get_interface_settings()
+        assert settings1 is settings2
+
+        # Clean up
+        reset_interface_settings()
+
+    def test_interface_settings_model_dump(self) -> None:
+        """Test interface settings can be dumped to dict."""
+        from clean_interfaces.utils.settings import InterfaceSettings
+
+        settings = InterfaceSettings()
+        data = settings.model_dump()
+        assert "interface_type" in data
+        assert data["interface_type"] == "cli"
