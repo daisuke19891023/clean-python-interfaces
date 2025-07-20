@@ -65,7 +65,7 @@ class TestBaseComponent:
 
         # Assert
         mock_get_logger.assert_called_once_with(
-            "tests.unit.test_base.CustomService",
+            "tests.unit.clean_interfaces.test_base.CustomService",
         )
         assert instance.logger is mock_logger
 

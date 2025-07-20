@@ -82,17 +82,26 @@ class TestApplication:
 
     @patch("clean_interfaces.app.configure_logging")
     @patch("clean_interfaces.app.get_settings")
+    @patch("clean_interfaces.app.get_interface_settings")
     @patch("clean_interfaces.app.InterfaceFactory")
     def test_application_run_with_exception(
         self,
         mock_factory_class: MagicMock,
+        mock_get_interface_settings: MagicMock,
         mock_get_settings: MagicMock,
         mock_configure_logging: MagicMock,  # noqa: ARG002
     ) -> None:
         """Test Application run method with exception."""
         # Setup mocks
         mock_settings = MagicMock()
+        mock_settings.log_level = "INFO"
+        mock_settings.log_format = "json"
+        mock_settings.log_file_path = None
         mock_get_settings.return_value = mock_settings
+
+        mock_interface_settings = MagicMock()
+        mock_interface_settings.model_dump.return_value = {"interface_type": "cli"}
+        mock_get_interface_settings.return_value = mock_interface_settings
 
         mock_interface = MagicMock()
         mock_interface.name = "CLI"

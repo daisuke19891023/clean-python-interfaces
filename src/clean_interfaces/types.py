@@ -7,3 +7,4 @@ class InterfaceType(str, Enum):
     """Available interface types."""
 
     CLI = "cli"
+    RESTAPI = "restapi"

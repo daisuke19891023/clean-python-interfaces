@@ -38,18 +38,22 @@ class CLIInterface(BaseInterface):
         # Set the default command to welcome
         self.app.command()(self.welcome)
 
+        # Add a callback that shows welcome when no command is specified
+        self.app.callback(invoke_without_command=True)(self._main_callback)
+
+    def _main_callback(self, ctx: typer.Context) -> None:  # pragma: no cover
+        """Run when no subcommand is provided."""
+        if ctx.invoked_subcommand is None:
+            self.welcome()
+
     def welcome(self) -> None:
         """Display welcome message."""
         msg = WelcomeMessage()
-        console.print(f"[bold green]{msg.message}[/bold green]")
-        console.print(f"[dim]{msg.hint}[/dim]")
+        # Use console for output (configured for E2E test compatibility)
+        console.print(msg.message)
+        console.print(msg.hint)
 
     def run(self) -> None:
         """Run the CLI interface."""
-        # If no arguments provided, show welcome
-        import sys
-
-        if len(sys.argv) == 1:
-            self.welcome()
-        else:
-            self.app()
+        # Let Typer handle the command parsing
+        self.app()

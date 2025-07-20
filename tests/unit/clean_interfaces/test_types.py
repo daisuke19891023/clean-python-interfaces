@@ -17,12 +17,20 @@ class TestInterfaceType:
         assert hasattr(InterfaceType, "CLI")
         assert InterfaceType.CLI.value == "cli"
 
+    def test_interface_type_has_restapi(self) -> None:
+        """Test that InterfaceType has RESTAPI option."""
+        assert hasattr(InterfaceType, "RESTAPI")
+        assert InterfaceType.RESTAPI.value == "restapi"
+
     def test_interface_type_values(self) -> None:
         """Test InterfaceType values are correct."""
         assert InterfaceType.CLI.value == "cli"
-        # Future interfaces can be added here
+        assert InterfaceType.RESTAPI.value == "restapi"
 
     def test_interface_type_from_string(self) -> None:
         """Test creating InterfaceType from string."""
-        interface = InterfaceType("cli")
-        assert interface == InterfaceType.CLI
+        cli_interface = InterfaceType("cli")
+        assert cli_interface == InterfaceType.CLI
+
+        restapi_interface = InterfaceType("restapi")
+        assert restapi_interface == InterfaceType.RESTAPI
