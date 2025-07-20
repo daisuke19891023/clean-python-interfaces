@@ -1,301 +1,306 @@
-# TestProject
+# Clean Interfaces
 
-A test project for verification
+A flexible Python application framework with multiple interface types and comprehensive logging support.
 
 ## Features
 
--   Modern Python project structure with uv and nox
--   Comprehensive code quality tools (Ruff, Black, isort, Pyright)
--   Security scanning (Bandit, pip-audit, Safety)
--   Automated testing with pytest and coverage
--   Documentation with MkDocs Material
--   Pre-commit hooks for code quality
--   Conventional commits with Commitizen
--   GitHub Actions CI/CD pipeline
--   Docker support
--   Structured logging with OpenTelemetry support
+- **Multiple Interface Types**: Support for CLI and REST API interfaces
+- **Flexible Configuration**: Environment-based configuration with `.env` file support
+- **Structured Logging**: Advanced logging with OpenTelemetry integration
+- **Modern Python**: Built with Python 3.12+ and modern tooling
+- **Comprehensive Testing**: Unit, API, and E2E test coverage
+- **Type Safety**: Full type hints with strict Pyright checking
+- **Code Quality**: Automated linting and formatting with Ruff
+- **Dependency Management**: Managed with uv for fast, reliable builds
+
+## Project Structure
+
+```
+clean-interfaces/
+├── src/clean_interfaces/       # Main application code
+│   ├── __init__.py            # Package initialization
+│   ├── app.py                 # Application entry point
+│   ├── base.py                # Base component class
+│   ├── main.py                # CLI entry point with --dotenv support
+│   ├── types.py               # Type definitions
+│   ├── interfaces/            # Interface implementations
+│   │   ├── __init__.py
+│   │   ├── base.py           # Base interface class
+│   │   ├── cli.py            # CLI interface using Typer
+│   │   ├── factory.py        # Interface factory pattern
+│   │   └── restapi.py        # REST API interface using FastAPI
+│   ├── models/                # Data models
+│   │   ├── __init__.py
+│   │   ├── api.py            # API response models
+│   │   └── io.py             # I/O models (e.g., WelcomeMessage)
+│   └── utils/                 # Utility modules
+│       ├── __init__.py
+│       ├── file_handler.py    # File handling utilities
+│       ├── logger.py          # Structured logging setup
+│       ├── otel_exporter.py   # OpenTelemetry integration
+│       └── settings.py        # Application settings
+├── tests/                      # Test suite
+│   ├── unit/                  # Unit tests
+│   ├── api/                   # API tests
+│   └── e2e/                   # End-to-end tests
+├── docs/                       # Documentation
+├── constraints/                # Dependency constraints
+├── .env                       # Environment configuration (not in git)
+├── .env.example               # Example environment configuration
+├── pyproject.toml             # Project configuration
+├── noxfile.py                 # Task automation
+├── CLAUDE.md                  # AI assistant instructions
+└── README.md                  # This file
+```
 
 ## Quick Start
 
 ### Prerequisites
 
--   Python 3.12+
--   uv (Python package manager)
+- Python 3.12 or higher
+- uv (Python package manager)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd testproject
+git clone <repository-url>
+cd clean-interfaces
 
-# Install dependencies
-uv pip install -e ".[dev]"
+# Create virtual environment and install dependencies
+uv sync
+
+# Copy environment configuration
+cp .env.example .env
+
+# Edit .env with your configuration
+```
+
+### Running the Application
+
+```bash
+# Run with default settings (uses .env file)
+uv run python -m clean_interfaces.main
+
+# Run with custom environment file
+uv run python -m clean_interfaces.main --dotenv prod.env
+
+# Show help
+uv run python -m clean_interfaces.main --help
+```
+
+## Configuration
+
+### Environment Variables
+
+Configuration is managed through environment variables. See `.env.example` for all available options:
+
+| Variable | Description | Default | Options |
+|----------|-------------|---------|---------|
+| `INTERFACE_TYPE` | Interface to use | `cli` | `cli`, `restapi` |
+| `LOG_LEVEL` | Logging level | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
+| `LOG_FORMAT` | Log output format | `json` | `json`, `console`, `plain` |
+| `LOG_FILE_PATH` | Log file path | None | Any valid file path |
+| `OTEL_LOGS_EXPORT_MODE` | OpenTelemetry export mode | `file` | `file`, `otlp`, `both` |
+| `OTEL_ENDPOINT` | OTLP collector endpoint | `http://localhost:4317` | Any valid URL |
+| `OTEL_SERVICE_NAME` | Service name | `clean-interfaces` | Any string |
+| `OTEL_EXPORT_TIMEOUT` | Export timeout (ms) | `30000` | Positive integer |
+
+### Using Custom Environment Files
+
+You can specify custom environment files using the `--dotenv` option:
+
+```bash
+# Development environment
+uv run python -m clean_interfaces.main --dotenv dev.env
+
+# Production environment
+uv run python -m clean_interfaces.main --dotenv prod.env
+
+# Testing environment
+uv run python -m clean_interfaces.main --dotenv test.env
+```
+
+## Development
+
+### Setup Development Environment
+
+```bash
+# Install development dependencies
+uv sync --extra dev
 
 # Install pre-commit hooks
-pre-commit install
+uv run pre-commit install
 ```
 
 ### Development Commands
 
-| Command              | Description                    |
-| -------------------- | ------------------------------ |
-| `nox -s lint`        | Run linting with Ruff          |
-| `nox -s format_code` | Format code with Ruff          |
-| `nox -s typing`      | Run type checking with Pyright |
-| `nox -s test`        | Run tests with coverage        |
-| `nox -s security`    | Run security checks            |
-| `nox -s docs`        | Build documentation            |
-| `nox -s ci`          | Run all CI checks              |
-| `nox -s all_checks`  | Run all quality checks         |
+| Command | Description |
+|---------|-------------|
+| `nox -s lint` | Run code linting |
+| `nox -s format_code` | Format code |
+| `nox -s typing` | Run type checking |
+| `nox -s test` | Run all tests |
+| `nox -s security` | Run security checks |
+| `nox -s docs` | Build documentation |
+| `nox -s ci` | Run all CI checks |
 
 ### Testing
 
 ```bash
-# Run tests with coverage
+# Run all tests
 nox -s test
 
-# Run tests in parallel
-pytest -n auto
+# Run specific test file
+uv run pytest tests/unit/clean_interfaces/test_app.py
 
-# Run specific test markers
-pytest -m "not slow"
+# Run with coverage
+uv run pytest --cov=src --cov-report=html
 ```
 
-### Logging Configuration
+### Code Quality
 
-The project includes structured logging with OpenTelemetry support. Configure logging behavior using environment variables:
+The project maintains high code quality standards:
 
-#### Environment Variables
+- **Type Checking**: Strict Pyright type checking
+- **Linting**: Comprehensive Ruff rules
+- **Formatting**: Automated with Ruff formatter
+- **Testing**: 80% minimum coverage requirement
+- **Security**: Regular security scanning
 
-| Variable | Description | Default | Options |
-| -------- | ----------- | ------- | ------- |
-| `LOG_LEVEL` | Logging level | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
-| `LOG_FORMAT` | Log output format | `json` | `json`, `console`, `plain` |
-| `LOG_FILE_PATH` | Path to log file (optional) | None | Any valid file path |
-| `OTEL_LOGS_EXPORT_MODE` | OpenTelemetry export mode | `file` | `file`, `otlp`, `both` |
-| `OTEL_ENDPOINT` | OpenTelemetry collector endpoint | `http://localhost:4317` | Any valid URL |
-| `OTEL_SERVICE_NAME` | Service name for OpenTelemetry | `python-app` | Any string |
-| `OTEL_EXPORT_TIMEOUT` | Export timeout in milliseconds | `30000` | Any positive integer |
+## Interface Types
 
-#### Usage Examples
+### CLI Interface
+
+The default interface provides a command-line interface using Typer:
 
 ```bash
-# Local file logging only
-export LOG_FILE_PATH="/var/log/myapp.log"
-export OTEL_LOGS_EXPORT_MODE="file"
-
-# OTLP export only
-export OTEL_LOGS_EXPORT_MODE="otlp"
-export OTEL_ENDPOINT="http://otel-collector:4317"
-export OTEL_SERVICE_NAME="my-service"
-
-# Both file and OTLP export
-export OTEL_LOGS_EXPORT_MODE="both"
-export LOG_FILE_PATH="/var/log/myapp.log"
-export OTEL_ENDPOINT="http://otel-collector:4317"
-
-# Development mode with console output
-export LOG_LEVEL="DEBUG"
-export LOG_FORMAT="console"
+# Run CLI interface
+INTERFACE_TYPE=cli uv run python -m clean_interfaces.main
 ```
 
-#### Code Example
+Features:
+- Interactive command-line interface
+- Rich terminal output
+- Help documentation
+- Command completion
 
-```python
-from test_project.utils.logger import get_logger, setup_application_logging
+### REST API Interface
 
-# Basic usage
-logger = get_logger("my_module")
-logger.info("Application started", version="1.0.0")
-
-# With application setup
-app_logger = setup_application_logging("my_app", environment="production")
-app_logger.error("Error occurred", error_code="E001")
-
-# Context binding
-user_logger = logger.bind(user_id="user123", request_id="req456")
-user_logger.info("User action", action="login")
-```
-
-### Documentation
+The REST API interface provides HTTP endpoints using FastAPI:
 
 ```bash
-# Build documentation
+# Run REST API interface
+INTERFACE_TYPE=restapi uv run python -m clean_interfaces.main
+```
+
+Features:
+- OpenAPI documentation
+- Automatic request validation
+- JSON responses
+- Async support
+
+## Logging
+
+The application uses structured logging with multiple output formats:
+
+### JSON Format (Production)
+```json
+{
+  "timestamp": "2025-07-20T10:30:45.123Z",
+  "level": "info",
+  "logger": "clean_interfaces.app",
+  "message": "Application started",
+  "interface": "cli"
+}
+```
+
+### Console Format (Development)
+```
+2025-07-20 10:30:45 [INFO] clean_interfaces.app: Application started interface=cli
+```
+
+### OpenTelemetry Integration
+
+When enabled, logs can be exported to OpenTelemetry collectors:
+
+```bash
+# Enable OTLP export
+OTEL_LOGS_EXPORT_MODE=otlp
+OTEL_ENDPOINT=http://collector:4317
+OTEL_SERVICE_NAME=my-service
+```
+
+## Documentation
+
+### Building Documentation
+
+```bash
+# Build with Sphinx (API documentation)
 nox -s docs
 
+# Build with MkDocs (user guide)
+uv run mkdocs build
+
 # Serve documentation locally
-mkdocs serve
-```
-
-### Docker
-
-```bash
-# Build Docker image
-docker build -t testproject .
-
-# Run Docker container
-docker run testproject
-```
-
-## Project Structure
-
-```
-testproject/
-├── src/                    # Source code
-├── tests/                  # Test files
-├── docs/                   # Documentation
-├── .github/                # GitHub configuration
-├── .vscode/                # VS Code settings
-├── constraints/            # Dependency constraints
-├── pyproject.toml          # Project configuration
-├── noxfile.py              # Nox tasks
-├── mkdocs.yml              # Documentation configuration
-├── Dockerfile              # Docker configuration
-└── README.md               # This file
+uv run mkdocs serve
 ```
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Run quality checks: `nox -s all_checks`
-5. Commit using conventional commits: `cz commit`
-6. Create a pull request
+4. Run quality checks (`nox -s ci`)
+5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## Development Workflow
+### Development Guidelines
 
-### Code Quality
+- Follow conventional commits
+- Maintain test coverage above 80%
+- Ensure all type checks pass
+- Update documentation as needed
+- Add tests for new features
 
-The project uses several tools to maintain code quality:
+### Pre-commit Setup
 
--   **Ruff**: Fast Python linter and formatter
--   **Black**: Uncompromising code formatter
--   **isort**: Import sorting
--   **Pyright**: Type checking
--   **Bandit**: Security linting
--   **pip-audit**: Dependency vulnerability scanning
--   **Safety**: Commercial-grade security scanning
+This project uses pre-commit hooks to ensure code quality. The hooks run automatically before each commit.
 
-### Pre-commit Hooks
-
-Pre-commit hooks automatically run quality checks before each commit:
+#### Installation
 
 ```bash
 # Install pre-commit hooks
-pre-commit install
-
-# Run all hooks manually
-pre-commit run --all-files
+uv run pre-commit install
 ```
 
-### Conventional Commits
-
-The project uses conventional commits for versioning:
+#### Manual Run
 
 ```bash
-# Use Commitizen for commits
-cz commit
+# Run on all files
+uv run pre-commit run --all-files
 
-# Bump version
-cz bump
+# Run on staged files only
+uv run pre-commit run
 ```
+
+#### Hook Configuration
+
+The pre-commit hooks use nox to ensure consistency with the project's configuration:
+
+- **ruff format**: Formats code according to `pyproject.toml` settings
+- **ruff lint**: Checks and fixes linting issues based on `pyproject.toml` rules  
+- **pyright**: Type checks the code using project settings
+
+All hooks respect the configuration in `pyproject.toml`, ensuring no divergence between pre-commit and regular development commands.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-# 開発環境セットアップ手順
+## Acknowledgments
 
-## 手動セットアップ
-
-### pipx のインストール（入っていない場合）
-
-```bash
-sudo apt update
-sudo apt install pipx
-pipx ensurepath
-```
-
-詳細は[pipx の公式ドキュメント](https://pipx.pypa.io/stable/installation/)を参照してください。
-
-### uv のインストール
-
-```bash
-pipx install uv
-```
-
-詳細は[uv の公式ドキュメント](https://docs.astral.sh/uv/getting-started/installation/#configuring-installation)を参照してください。
-
-### 対象の Python バージョンのインストール
-
-```bash
-uv python install [TARGET_PYTHON_VERSION]
-```
-
-### 仮想環境の作成
-
-```bash
-uv venv
-```
-
-### ライブラリのインストール
-
-```bash
-uv sync
-```
-
-### pre-commit の設定
-
-```bash
-uv run pre-commit install
-```
-
-ここまでは`setup.sh`で実行できます
-
-### nox の実行
-
-```bash
-uv run nox
-```
-
-### 仮想環境の有効化
-
-```bash
-source .venv/bin/activate
-```
-
-### 仮想環境の終了
-
-```bash
-deactivate
-```
-
-## 自動セットアップスクリプト
-
-環境のセットアップを自動化するために、`setup.sh`スクリプトを用意しています。
-
-### setup.sh の使用方法
-
-このスクリプトを使用することで、開発環境のセットアップを簡単に行うことができます。
-
-1. `setup.sh`ファイルをプロジェクトのルートディレクトリに配置します。
-
-2. スクリプトに実行権限を付与します：
-
-    ```bash
-    chmod +x setup.sh
-    ```
-
-3. スクリプトを実行します：
-
-    ```bash
-    ./setup.sh
-    ```
-
-注意事項：
-
--   スクリプトは sudo コマンドを使用するため、実行時にパスワードの入力を求められる場合があります。
--   Python のバージョンインストール行はデフォルトでコメントアウトされています。使用する場合は、スクリプトを編集し、適切なバージョン番号を指定してください。
--   仮想環境の有効化と終了は、スクリプト実行後に手動で行う必要があります。
+- Built with modern Python tooling
+- Inspired by clean architecture principles
+- Designed for extensibility and maintainability

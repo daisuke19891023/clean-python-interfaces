@@ -3,6 +3,7 @@
 import os
 import sys
 from collections.abc import Generator
+from typing import Any
 
 import pexpect
 import pytest
@@ -19,20 +20,22 @@ class CLIRunner:
 
         """
         self.timeout = timeout
-        self.process: pexpect.spawn | None = None
+        self.process: Any | None = None
 
     def run(
         self,
         command: str | None = None,
         args: list[str] | None = None,
         env: dict[str, str] | None = None,
-    ) -> pexpect.spawn:
+        logfile: Any = None,
+    ) -> Any:
         """Run a CLI command.
 
         Args:
             command: Command to run (defaults to clean-interfaces)
             args: Command line arguments
             env: Environment variables
+            logfile: Optional file-like object to log all output
 
         Returns:
             pexpect.spawn[str]: The spawned process
@@ -41,7 +44,8 @@ class CLIRunner:
         if command is None:
             # Use the installed script entry point
             command = sys.executable
-            base_args = ["-m", "clean_interfaces.main"]
+            # Add -u flag to disable buffering
+            base_args = ["-u", "-m", "clean_interfaces.main"]
         else:
             base_args = []
 
@@ -50,20 +54,38 @@ class CLIRunner:
 
         full_args = base_args + args
 
-        # Merge environment variables
-        cmd_env = os.environ.copy()
-        if env:
-            cmd_env.update(env)
+        # Merge environment variables - always use os.environ as base
+        # This ensures Python can find modules and system libraries
+        cmd_env = {**os.environ, **env} if env else os.environ.copy()
 
         # Spawn the process
         # Note: pexpect accepts dict[str, str] despite type hints
-        self.process = pexpect.spawn(
-            command,
-            args=full_args,
-            env=cmd_env if env else None,
-            encoding="utf-8",
-            timeout=self.timeout,
-        )
+        # Pass env only if explicitly provided
+        spawn_kwargs: dict[str, Any] = {
+            "args": full_args,
+            "encoding": "utf-8",
+            "timeout": self.timeout,
+            "echo": False,  # Disable echo to avoid duplicate output
+            "dimensions": (24, 80),  # Set terminal dimensions
+        }
+        if env:
+            spawn_kwargs["env"] = cmd_env
+        if logfile is not None:
+            spawn_kwargs["logfile"] = logfile
+
+        self.process = pexpect.spawn(command, **spawn_kwargs)
+
+        # Increase the delaybeforesend to give the process more time
+        self.process.delaybeforesend = 0.1
+
+        # Wait for the process to start and produce initial output
+        import time
+
+        time.sleep(0.5)  # Wait for process initialization
+
+        # Ensure the process is running
+        if not self.process.isalive():
+            raise RuntimeError("Process failed to start")
 
         return self.process
 
@@ -168,11 +190,19 @@ def clean_env() -> dict[str, str]:
         "PATH": os.environ.get("PATH", ""),
         "HOME": os.environ.get("HOME", ""),
         "USER": os.environ.get("USER", ""),
+        # Critical for pexpect: disable Python output buffering
+        "PYTHONUNBUFFERED": "1",
         # Disable any color/formatting that might interfere with tests
         "NO_COLOR": "1",
         "TERM": "dumb",
         # Set log level to ERROR to reduce output
         "LOG_LEVEL": "ERROR",
+        # Use plain log format for tests to avoid JSON output
+        "LOG_FORMAT": "plain",
+        # Disable file logging
+        "LOG_FILE_PATH": "",
+        # Force UTF-8 encoding
+        "PYTHONIOENCODING": "utf-8",
     }
 
     # Add Python path to ensure our package is importable

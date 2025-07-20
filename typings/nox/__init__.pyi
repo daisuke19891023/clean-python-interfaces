@@ -1,11 +1,7 @@
-
-
 from collections.abc import Callable
 from typing import Any
 
 class Session:
-
-
     python: str
 
     def install(self, *args: str, **kwargs: Any) -> None: ...
@@ -24,8 +20,6 @@ def session(
 ) -> Callable[..., Any]: ...
 
 class Options:
-
-
     sessions: list[str]
     pythons: list[str]
     default_venv_backend: str

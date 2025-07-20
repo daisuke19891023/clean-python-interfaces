@@ -5,7 +5,7 @@ with support for environment variables and validation.
 """
 
 from enum import Enum
-from typing import Any, Literal
+from typing import Any, ClassVar, Literal
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -24,6 +24,8 @@ class LoggingSettings(BaseSettings):
 
     All settings can be configured via environment variables.
     """
+
+    instance: ClassVar[Any] = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -114,6 +116,8 @@ class LoggingSettings(BaseSettings):
 class InterfaceSettings(BaseSettings):
     """Interface configuration settings."""
 
+    instance: ClassVar[Any] = None
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -123,7 +127,7 @@ class InterfaceSettings(BaseSettings):
 
     interface_type: str = Field(
         default="cli",
-        description="Type of interface to use (cli, api, gui)",
+        description="Type of interface to use (cli, restapi)",
     )
 
     @field_validator("interface_type")
@@ -149,11 +153,6 @@ class InterfaceSettings(BaseSettings):
         return InterfaceType(self.interface_type)
 
 
-# Create a singleton instance for easy access
-_settings_instance: LoggingSettings | None = None
-_interface_settings_instance: InterfaceSettings | None = None
-
-
 def get_settings() -> LoggingSettings:
     """Get the global settings instance.
 
@@ -161,10 +160,9 @@ def get_settings() -> LoggingSettings:
         LoggingSettings: The settings instance
 
     """
-    global _settings_instance  # noqa: PLW0603
-    if _settings_instance is None:
-        _settings_instance = LoggingSettings()
-    return _settings_instance
+    if LoggingSettings.instance is None:
+        LoggingSettings.instance = LoggingSettings()
+    return LoggingSettings.instance
 
 
 def reset_settings() -> None:
@@ -172,8 +170,7 @@ def reset_settings() -> None:
 
     This is mainly useful for testing.
     """
-    global _settings_instance  # noqa: PLW0603
-    _settings_instance = None
+    LoggingSettings.instance = None
 
 
 def get_interface_settings() -> InterfaceSettings:
@@ -183,10 +180,9 @@ def get_interface_settings() -> InterfaceSettings:
         InterfaceSettings: The interface settings instance
 
     """
-    global _interface_settings_instance  # noqa: PLW0603
-    if _interface_settings_instance is None:
-        _interface_settings_instance = InterfaceSettings()
-    return _interface_settings_instance
+    if InterfaceSettings.instance is None:
+        InterfaceSettings.instance = InterfaceSettings()
+    return InterfaceSettings.instance
 
 
 def reset_interface_settings() -> None:
@@ -194,5 +190,4 @@ def reset_interface_settings() -> None:
 
     This is mainly useful for testing.
     """
-    global _interface_settings_instance  # noqa: PLW0603
-    _interface_settings_instance = None
+    InterfaceSettings.instance = None

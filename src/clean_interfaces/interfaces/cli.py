@@ -7,7 +7,9 @@ from clean_interfaces.models.io import WelcomeMessage
 
 from .base import BaseInterface
 
-console = Console()
+# Configure console for better test compatibility
+# Force terminal mode even in non-TTY environments
+console = Console(force_terminal=True, force_interactive=False)
 
 
 class CLIInterface(BaseInterface):
@@ -36,7 +38,7 @@ class CLIInterface(BaseInterface):
     def _setup_commands(self) -> None:
         """Set up CLI commands."""
         # Set the default command to welcome
-        self.app.command()(self.welcome)
+        self.app.command(name="welcome")(self.welcome)
 
         # Add a callback that shows welcome when no command is specified
         self.app.callback(invoke_without_command=True)(self._main_callback)
@@ -45,6 +47,8 @@ class CLIInterface(BaseInterface):
         """Run when no subcommand is provided."""
         if ctx.invoked_subcommand is None:
             self.welcome()
+            # Ensure we exit cleanly after showing welcome
+            raise typer.Exit(0)
 
     def welcome(self) -> None:
         """Display welcome message."""
@@ -52,6 +56,8 @@ class CLIInterface(BaseInterface):
         # Use console for output (configured for E2E test compatibility)
         console.print(msg.message)
         console.print(msg.hint)
+        # Force flush to ensure output is visible
+        console.file.flush()
 
     def run(self) -> None:
         """Run the CLI interface."""
