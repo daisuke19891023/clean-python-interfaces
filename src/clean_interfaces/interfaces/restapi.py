@@ -1,5 +1,6 @@
 """REST API interface implementation using FastAPI."""
 
+from datetime import UTC, datetime
 from typing import Any
 
 import uvicorn
@@ -130,12 +131,8 @@ class RestAPIInterface(BaseInterface):
                 base_schema["info"] = {}
 
             base_schema["info"]["dynamic_content"] = {
-                "source_files_analyzed": 10,
-                "documentation_files_found": 5,
-                "interfaces_discovered": 2,
-                "models_discovered": 5,
-                "endpoints_analyzed": 8,
-                "generation_timestamp": "2024-01-20T12:00:00Z",
+                "generation_timestamp": datetime.now(UTC).isoformat(),
+                # Placeholder for future source code analysis implementation
             }
 
             return base_schema
@@ -146,31 +143,18 @@ class RestAPIInterface(BaseInterface):
         )
         async def swagger_ui_analysis() -> SwaggerAnalysisResponse:  # type: ignore[misc]
             """Source code and documentation analysis for Swagger UI."""
-            # Return mock analysis data
+            # Placeholder data - actual source code analysis not yet implemented
             return SwaggerAnalysisResponse(
-                interfaces=["RestAPIInterface", "CLIInterface"],
-                models=[
-                    "HealthResponse",
-                    "WelcomeResponse",
-                    "ErrorResponse",
-                    "SwaggerAnalysisResponse",
-                    "DynamicContentMetadata",
-                ],
-                endpoints=[
-                    "/",
-                    "/health",
-                    "/api/v1/welcome",
-                    "/api/v1/swagger-ui",
-                    "/api/v1/swagger-ui/schema",
-                    "/api/v1/swagger-ui/analysis",
-                ],
-                documentation_files=["README.md", "docs/api.md", "docs/development.md"],
+                interfaces=[],
+                models=[],
+                endpoints=[],
+                documentation_files=[],
                 summary={
-                    "total_source_files": 10,
-                    "total_documentation_files": 5,
-                    "total_interfaces": 2,
-                    "total_models": 5,
-                    "total_endpoints": 6,
+                    "total_source_files": 0,
+                    "total_documentation_files": 0,
+                    "total_interfaces": 0,
+                    "total_models": 0,
+                    "total_endpoints": 0,
                 },
             )
 
