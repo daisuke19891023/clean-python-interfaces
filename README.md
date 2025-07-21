@@ -295,6 +295,34 @@ The pre-commit hooks use nox to ensure consistency with the project's configurat
 
 All hooks respect the configuration in `pyproject.toml`, ensuring no divergence between pre-commit and regular development commands.
 
+### Testing Helpers
+
+This project includes testing helpers to make debugging easier:
+
+#### Pexpect Debug Helper
+
+For E2E tests using pexpect, use the debug helper:
+
+```python
+from tests.helpers.pexpect_debug import run_cli_with_debug
+
+# Run with debug output enabled
+output, exitstatus = run_cli_with_debug(
+    "python -m clean_interfaces.main --help",
+    env=clean_env,
+    timeout=10,
+    debug=True,  # Enable debug output
+)
+```
+
+Enable debug mode in CI by setting `PYTEST_DEBUG=1` environment variable.
+
+### GitHub Actions Integration
+
+This project includes a GitHub Actions workflow for Claude Code integration (`.github/workflows/claude.yml`). 
+
+**⚠️ Current Status (2025-07-20)**: The `claude-code-action@beta` is experiencing issues where the Claude CLI is not properly installed in the GitHub Actions environment. Until Anthropic fixes this issue, the workflow will not function correctly. You can still use Claude Code manually through the web interface.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

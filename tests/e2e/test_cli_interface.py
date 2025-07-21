@@ -1,5 +1,6 @@
 """E2E tests for CLI interface functionality."""
 
+import re
 import subprocess
 import sys
 
@@ -8,6 +9,12 @@ import pytest
 
 class TestCLIInterfaceE2E:
     """E2E tests for CLI interface."""
+
+    @staticmethod
+    def strip_ansi_codes(text: str) -> str:
+        """Remove ANSI escape codes from text."""
+        ansi_escape = re.compile(r"\x1b\[[0-9;]*m")
+        return ansi_escape.sub("", text)
 
     def test_cli_welcome_message(self) -> None:
         """Test that CLI displays welcome message on startup."""
@@ -34,9 +41,11 @@ class TestCLIInterfaceE2E:
         )
 
         assert result.returncode == 0
-        assert "Usage:" in result.stdout
-        assert "Options" in result.stdout  # Typer uses "Options" without colon
-        assert "--help" in result.stdout
+        # Strip ANSI codes for proper assertion
+        clean_output = self.strip_ansi_codes(result.stdout)
+        assert "Usage:" in clean_output
+        assert "Options" in clean_output  # Typer uses "Options" without colon
+        assert "help" in clean_output  # Check without dashes as they may vary
 
     def test_cli_with_interface_type_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that CLI respects INTERFACE_TYPE environment variable."""

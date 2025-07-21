@@ -12,6 +12,7 @@ class TestApplication:
 
     @patch("clean_interfaces.app.load_dotenv")
     @patch("clean_interfaces.app.configure_logging")
+    @patch("clean_interfaces.app.get_logger")
     @patch("clean_interfaces.app.get_settings")
     @patch("clean_interfaces.app.get_interface_settings")
     @patch("clean_interfaces.app.InterfaceFactory")
@@ -20,6 +21,7 @@ class TestApplication:
         mock_factory_class: MagicMock,
         mock_get_interface_settings: MagicMock,
         mock_get_settings: MagicMock,
+        mock_get_logger: MagicMock,
         mock_configure_logging: MagicMock,
         mock_load_dotenv: MagicMock,
     ) -> None:
@@ -41,6 +43,10 @@ class TestApplication:
         mock_factory.create_from_settings.return_value = mock_interface
         mock_factory_class.return_value = mock_factory
 
+        # Mock logger
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger
+
         # Create application
         app = Application()
 
@@ -60,6 +66,7 @@ class TestApplication:
 
     @patch("clean_interfaces.app.load_dotenv")
     @patch("clean_interfaces.app.configure_logging")
+    @patch("clean_interfaces.app.get_logger")
     @patch("clean_interfaces.app.get_settings")
     @patch("clean_interfaces.app.get_interface_settings")
     @patch("clean_interfaces.app.InterfaceFactory")
@@ -68,6 +75,7 @@ class TestApplication:
         mock_factory_class: MagicMock,
         mock_get_interface_settings: MagicMock,
         mock_get_settings: MagicMock,
+        mock_get_logger: MagicMock,
         mock_configure_logging: MagicMock,
         mock_load_dotenv: MagicMock,
     ) -> None:
@@ -91,6 +99,10 @@ class TestApplication:
         mock_factory.create_from_settings.return_value = mock_interface
         mock_factory_class.return_value = mock_factory
 
+        # Mock logger
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger
+
         # Create application with dotenv path
         dotenv_path = Path("test.env")
         app = Application(dotenv_path=dotenv_path)
@@ -111,19 +123,34 @@ class TestApplication:
 
     @patch("clean_interfaces.app.load_dotenv")
     @patch("clean_interfaces.app.configure_logging")
+    @patch("clean_interfaces.app.get_logger")
     @patch("clean_interfaces.app.get_settings")
+    @patch("clean_interfaces.app.get_interface_settings")
     @patch("clean_interfaces.app.InterfaceFactory")
     def test_application_run(
         self,
         mock_factory_class: MagicMock,
+        mock_get_interface_settings: MagicMock,
         mock_get_settings: MagicMock,
+        mock_get_logger: MagicMock,
         mock_configure_logging: MagicMock,  # noqa: ARG002
         mock_load_dotenv: MagicMock,  # noqa: ARG002
     ) -> None:
         """Test Application run method."""
         # Setup mocks
         mock_settings = MagicMock()
+        mock_settings.log_level = "INFO"
+        mock_settings.log_format = "json"
+        mock_settings.log_file_path = None
         mock_get_settings.return_value = mock_settings
+
+        mock_interface_settings = MagicMock()
+        mock_interface_settings.model_dump.return_value = {"interface_type": "cli"}
+        mock_get_interface_settings.return_value = mock_interface_settings
+
+        # Mock logger
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger
 
         mock_interface = MagicMock()
         mock_interface.name = "CLI"
@@ -140,6 +167,7 @@ class TestApplication:
 
     @patch("clean_interfaces.app.load_dotenv")
     @patch("clean_interfaces.app.configure_logging")
+    @patch("clean_interfaces.app.get_logger")
     @patch("clean_interfaces.app.get_settings")
     @patch("clean_interfaces.app.get_interface_settings")
     @patch("clean_interfaces.app.InterfaceFactory")
@@ -148,6 +176,7 @@ class TestApplication:
         mock_factory_class: MagicMock,
         mock_get_interface_settings: MagicMock,
         mock_get_settings: MagicMock,
+        mock_get_logger: MagicMock,
         mock_configure_logging: MagicMock,  # noqa: ARG002
         mock_load_dotenv: MagicMock,  # noqa: ARG002
     ) -> None:
@@ -163,6 +192,10 @@ class TestApplication:
         mock_interface_settings.model_dump.return_value = {"interface_type": "cli"}
         mock_get_interface_settings.return_value = mock_interface_settings
 
+        # Mock logger to prevent actual logging
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger
+
         mock_interface = MagicMock()
         mock_interface.name = "CLI"
         mock_interface.run.side_effect = RuntimeError("Test error")
@@ -177,6 +210,13 @@ class TestApplication:
 
         # Verify interface was attempted to run
         mock_interface.run.assert_called_once()
+
+        # Verify logger was called
+        mock_logger.error.assert_called_once_with(
+            "Application error",
+            error="Test error",
+        )
+        mock_logger.info.assert_any_call("Application shutting down")
 
 
 def test_create_app() -> None:

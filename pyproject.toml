@@ -112,6 +112,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["S101", "PLR2004", "TRY003", "EM101"]
+"tests/helpers/pexpect_debug.py" = ["T201", "TRY300"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

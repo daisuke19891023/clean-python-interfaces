@@ -714,6 +714,70 @@ nox -s typing    # Check immediately
 # NEVER proceed with suppression comments
 ```
 
+## Test Helpers
+
+### Pexpect Debug Helper
+
+When testing CLI applications with pexpect, use the `tests/helpers/pexpect_debug.py` helper for better debugging:
+
+```python
+from tests.helpers.pexpect_debug import run_cli_with_debug, spawn_cli_with_debug
+
+# Simple command execution with debug output
+def test_cli_command(clean_env: dict[str, str]) -> None:
+    output, exitstatus = run_cli_with_debug(
+        f"{sys.executable} -u -m clean_interfaces.main --help",
+        env=clean_env,
+        timeout=10,
+        debug=True,  # Enable debug output
+    )
+    assert exitstatus == 0
+
+# Interactive session for complex testing
+def test_interactive_cli(clean_env: dict[str, str]) -> None:
+    child = spawn_cli_with_debug(
+        f"{sys.executable} -u -m clean_interfaces.main",
+        env=clean_env,
+        timeout=30,
+        debug=True,
+    )
+    child.expect("prompt>")
+    child.sendline("command")
+    child.expect("response")
+```
+
+#### Debug Mode
+
+- Set `debug=True` or environment variable `PYTEST_DEBUG=1` to enable debug output
+- Debug output includes:
+  - Command being executed
+  - Environment variables
+  - Exit status
+  - Full output with length
+  - Timeout information
+
+#### When to Use
+
+- **Always use for E2E tests**: Provides better error messages than raw pexpect
+- **Debugging test failures**: Enable debug mode to see what's happening
+- **CI/CD debugging**: Set `PYTEST_DEBUG=1` in CI to get detailed logs
+
+#### Example Debug Output
+
+```
+[DEBUG] Running command: /workspace/.venv/bin/python3 -u -m clean_interfaces.main
+[DEBUG] Environment: {'PATH': '...', 'LOG_LEVEL': 'ERROR', ...}
+[DEBUG] Timeout: 10s
+--------------------------------------------------------------------------------
+[DEBUG] Exit status: 0
+[DEBUG] Output length: 584 chars
+[DEBUG] Output:
+--------------------------------------------------------------------------------
+Welcome to Clean Interfaces!
+Type --help for more information
+--------------------------------------------------------------------------------
+```
+
 ---
 
 **Remember**:
@@ -722,4 +786,5 @@ nox -s typing    # Check immediately
 - Quality checks after every single code modification
 - Modern Python 3.12+ type syntax always
 - Never suppress Ruff or Pyright warnings
+- Use pexpect_debug helper for all E2E/CLI tests
 - This document is living documentation. Evolve it as the project grows.
