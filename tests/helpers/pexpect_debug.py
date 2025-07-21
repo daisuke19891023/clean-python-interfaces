@@ -2,6 +2,7 @@
 
 import os
 import sys
+from typing import Any
 
 import pexpect
 
@@ -47,7 +48,9 @@ def run_cli_with_debug(
         # Handle return value
         if isinstance(result, tuple):  # type: ignore[arg-type]
             output, exitstatus = result  # type: ignore[misc]
-            output = str(output)  # Ensure output is string
+            output = (
+                str(output) if output is not None else ""  # type: ignore[arg-type]
+            )  # Ensure output is string
         else:
             output = str(result)
             exitstatus = 0
@@ -79,7 +82,7 @@ def spawn_cli_with_debug(
     env: dict[str, str] | None = None,
     timeout: int = 30,
     debug: bool | None = None,
-) -> pexpect.spawn:
+) -> Any:
     """Spawn CLI process with optional debug output for interactive testing.
 
     Args:
@@ -103,7 +106,7 @@ def spawn_cli_with_debug(
         print("-" * 80)
 
     # Create spawn object
-    child: pexpect.spawn = pexpect.spawn(
+    child: Any = pexpect.spawn(  # type: ignore[no-untyped-call]
         command,
         env=env,  # type: ignore[arg-type]
         timeout=timeout,
