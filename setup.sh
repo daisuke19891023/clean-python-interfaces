@@ -329,6 +329,11 @@ if [ -f "pyproject.toml" ]; then
     info "依存関係をインストールしています..."
     uv sync || error "依存関係のインストールに失敗しました"
     success "依存関係がインストールされました"
+    
+    # Install dev dependencies
+    info "開発依存関係をインストールしています..."
+    uv sync --extra dev || error "開発依存関係のインストールに失敗しました"
+    success "開発依存関係がインストールされました"
 fi
 
 # Set up pre-commit
@@ -337,6 +342,12 @@ if [ -f ".pre-commit-config.yaml" ]; then
     # Unset core.hooksPath and temporarily isolate from global/system git config
     (export GIT_CONFIG_GLOBAL=/dev/null; export GIT_CONFIG_SYSTEM=/dev/null; git config --unset-all core.hooksPath || true; uv run pre-commit install) || error "pre-commitの設定に失敗しました"
     success "pre-commitが設定されました"
+else
+    # Try to install pre-commit hooks even if .pre-commit-config.yaml doesn't exist yet
+    info "pre-commitフックをインストールしています..."
+    if command_exists pre-commit || [ -f ".venv/bin/pre-commit" ]; then
+        (export GIT_CONFIG_GLOBAL=/dev/null; export GIT_CONFIG_SYSTEM=/dev/null; git config --unset-all core.hooksPath || true; uv run pre-commit install) || info "pre-commit設定ファイルがありません。後で設定してください。"
+    fi
 fi
 
 echo ""

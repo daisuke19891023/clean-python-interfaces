@@ -79,7 +79,7 @@ def spawn_cli_with_debug(
     env: dict[str, str] | None = None,
     timeout: int = 30,
     debug: bool | None = None,
-) -> pexpect.spawn[str]:
+) -> pexpect.spawn:
     """Spawn CLI process with optional debug output for interactive testing.
 
     Args:
@@ -103,7 +103,7 @@ def spawn_cli_with_debug(
         print("-" * 80)
 
     # Create spawn object
-    child: pexpect.spawn[str] = pexpect.spawn(
+    child: pexpect.spawn = pexpect.spawn(
         command,
         env=env,  # type: ignore[arg-type]
         timeout=timeout,
