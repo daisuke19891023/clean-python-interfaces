@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 from clean_interfaces.interfaces.base import BaseInterface
 from clean_interfaces.interfaces.restapi import RestAPIInterface
@@ -73,3 +74,86 @@ class TestRestAPIInterface:
 
             # Check that logger was used during initialization
             assert mock_logger.info.called
+
+
+class TestRestAPISwaggerUIEndpoints:
+    """Test enhanced Swagger UI endpoints in RestAPI interface."""
+
+    def test_enhanced_swagger_ui_endpoint_exists(self) -> None:
+        """Test that enhanced Swagger UI endpoint is registered."""
+        api = RestAPIInterface()
+        routes = [route.path for route in api.app.routes]  # type: ignore[attr-defined]
+        assert "/api/v1/swagger-ui" in routes
+
+    def test_swagger_ui_schema_endpoint_exists(self) -> None:
+        """Test that Swagger UI schema endpoint is registered."""
+        api = RestAPIInterface()
+        routes = [route.path for route in api.app.routes]  # type: ignore[attr-defined]
+        assert "/api/v1/swagger-ui/schema" in routes
+
+    def test_swagger_ui_analysis_endpoint_exists(self) -> None:
+        """Test that Swagger UI analysis endpoint is registered."""
+        api = RestAPIInterface()
+        routes = [route.path for route in api.app.routes]  # type: ignore[attr-defined]
+        assert "/api/v1/swagger-ui/analysis" in routes
+
+    def test_enhanced_swagger_ui_returns_html(self) -> None:
+        """Test that enhanced Swagger UI endpoint returns HTML response."""
+        api = RestAPIInterface()
+        client = TestClient(api.app)
+        
+        response = client.get("/api/v1/swagger-ui")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("text/html")
+
+    def test_swagger_ui_schema_returns_json(self) -> None:
+        """Test that Swagger UI schema endpoint returns JSON response."""
+        api = RestAPIInterface()
+        client = TestClient(api.app)
+        
+        response = client.get("/api/v1/swagger-ui/schema")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "application/json"
+        
+        schema = response.json()
+        assert isinstance(schema, dict)
+        assert "info" in schema
+
+    def test_swagger_ui_analysis_returns_json(self) -> None:
+        """Test that Swagger UI analysis endpoint returns JSON response."""
+        api = RestAPIInterface()
+        client = TestClient(api.app)
+        
+        response = client.get("/api/v1/swagger-ui/analysis")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "application/json"
+        
+        analysis = response.json()
+        assert isinstance(analysis, dict)
+        assert "interfaces" in analysis
+        assert "models" in analysis
+
+    def test_swagger_ui_schema_includes_dynamic_content_metadata(self) -> None:
+        """Test that schema includes dynamic content generation metadata."""
+        api = RestAPIInterface()
+        client = TestClient(api.app)
+        
+        response = client.get("/api/v1/swagger-ui/schema")
+        schema = response.json()
+        
+        assert "info" in schema
+        assert "dynamic_content" in schema["info"]
+        assert "source_files_analyzed" in schema["info"]["dynamic_content"]
+        assert "documentation_files_found" in schema["info"]["dynamic_content"]
+
+    def test_swagger_ui_analysis_includes_interface_information(self) -> None:
+        """Test that analysis includes interface type information."""
+        api = RestAPIInterface()
+        client = TestClient(api.app)
+        
+        response = client.get("/api/v1/swagger-ui/analysis")
+        analysis = response.json()
+        
+        assert "interfaces" in analysis
+        assert isinstance(analysis["interfaces"], list)
+        assert len(analysis["interfaces"]) > 0

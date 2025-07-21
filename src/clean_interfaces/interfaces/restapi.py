@@ -5,9 +5,14 @@ from typing import Any
 import uvicorn
 import uvicorn.config
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
-from clean_interfaces.models.api import HealthResponse, WelcomeResponse
+from clean_interfaces.models.api import (
+    HealthResponse,
+    SwaggerAnalysisResponse,
+    WelcomeResponse,
+)
+from clean_interfaces.utils.doc_generator import DocumentGenerator
 
 from .base import BaseInterface
 
@@ -24,6 +29,9 @@ class RestAPIInterface(BaseInterface):
             description="A clean interface REST API implementation",
             version="1.0.0",
         )
+
+        # Initialize document generator for dynamic Swagger UI content
+        self.doc_generator = DocumentGenerator()
 
         self._setup_routes()
         self.logger.info("RestAPI interface initialized")
@@ -56,6 +64,35 @@ class RestAPIInterface(BaseInterface):
         async def welcome() -> WelcomeResponse:  # type: ignore[misc]
             """Welcome message endpoint."""
             return WelcomeResponse()
+
+        @self.app.get("/api/v1/swagger-ui", response_class=HTMLResponse)
+        async def enhanced_swagger_ui() -> str:  # type: ignore[misc]
+            """Enhanced Swagger UI with dynamic content generation."""
+            schema_url = "/api/v1/swagger-ui/schema"
+            html_content = self.doc_generator.generate_swagger_ui_html(schema_url)
+            return html_content
+
+        @self.app.get("/api/v1/swagger-ui/schema")
+        async def swagger_ui_schema() -> dict[str, Any]:  # type: ignore[misc]
+            """Enhanced OpenAPI schema with dynamic content metadata."""
+            # Get the base OpenAPI schema from FastAPI
+            base_schema = self.app.openapi()
+            
+            # Enhance it with dynamic content
+            enhanced_schema = self.doc_generator.generate_enhanced_openapi_schema(base_schema)
+            return enhanced_schema
+
+        @self.app.get("/api/v1/swagger-ui/analysis", response_model=SwaggerAnalysisResponse)
+        async def swagger_ui_analysis() -> SwaggerAnalysisResponse:  # type: ignore[misc]
+            """Source code and documentation analysis for Swagger UI."""
+            source_analysis = self.doc_generator.analyze_source_files()
+            docs_analysis = self.doc_generator.analyze_documentation_files()
+            
+            analysis_summary = self.doc_generator.generate_analysis_summary(
+                source_analysis, docs_analysis
+            )
+            
+            return SwaggerAnalysisResponse(**analysis_summary)
 
     def run(self) -> None:
         """Run the REST API interface."""
