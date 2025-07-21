@@ -1,0 +1,146 @@
+# GitLab CI configuration
+# Equivalent to GitHub Actions CI pipeline
+
+image: python:3.12-slim
+
+# Define stages
+stages:
+  - setup
+  - quality
+  - test
+  - security
+  - docs
+
+# Global variables
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  UV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/uv"
+
+# Cache configuration
+cache:
+  paths:
+    - .cache/pip
+    - .cache/uv
+    - .venv/
+
+# Before script - install system dependencies and uv
+before_script:
+  - apt-get update -qq && apt-get install -y -qq git curl
+  - curl -LsSf https://astral.sh/uv/install.sh | sh
+  - export PATH="$HOME/.cargo/bin:$PATH"
+  - uv --version
+
+# Setup job - install dependencies
+setup:
+  stage: setup
+  script:
+    - uv sync --extra dev
+  artifacts:
+    paths:
+      - .venv/
+    expire_in: 1 hour
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Linting job
+lint:
+  stage: quality
+  dependencies:
+    - setup
+  script:
+    - uv run nox -s lint
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Format checking job
+format_check:
+  stage: quality
+  dependencies:
+    - setup
+  script:
+    - uv run nox -s format_code
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Type checking job
+type_check:
+  stage: quality
+  dependencies:
+    - setup
+  script:
+    - uv run nox -s typing
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Test job
+test:
+  stage: test
+  dependencies:
+    - setup
+  script:
+    - uv run nox -s test
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - htmlcov/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Security checks job
+security:
+  stage: security
+  dependencies:
+    - setup
+  script:
+    - uv run nox -s security
+  allow_failure: true
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Documentation build job
+docs:
+  stage: docs
+  dependencies:
+    - setup
+  script:
+    - uv sync --all-extras
+    - uv run nox -s docs
+  artifacts:
+    paths:
+      - site/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Optional: Deploy documentation (for main branch only)
+pages:
+  stage: docs
+  dependencies:
+    - docs
+  script:
+    - mkdir public
+    - cp -r site/* public/ 2>/dev/null || echo "No docs site directory found"
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
