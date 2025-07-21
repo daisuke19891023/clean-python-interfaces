@@ -53,3 +53,58 @@ class TestCLIInterface:
         cli.run()
 
         cli.app.assert_called_once()
+
+    def test_help_command_exists(self) -> None:
+        """Test that help command is registered."""
+        cli = CLIInterface()
+        
+        # Check that help command is in the app's commands
+        commands = [cmd.name for cmd in cli.app.registered_commands.values()]
+        assert "help" in commands
+
+    def test_help_generation_methods(self) -> None:
+        """Test help generation logic."""
+        cli = CLIInterface()
+        
+        # Test that help generation method exists
+        assert hasattr(cli, "help")
+        assert callable(cli.help)
+
+    def test_command_discovery(self) -> None:
+        """Test command discovery functionality."""
+        cli = CLIInterface()
+        
+        # Test that CLI can discover its own commands
+        commands = cli._get_available_commands()
+        assert isinstance(commands, dict)
+        assert "welcome" in commands
+        assert "help" in commands
+
+    def test_help_formatting(self) -> None:
+        """Test help text formatting."""
+        cli = CLIInterface()
+        
+        # Mock the console output
+        with patch("clean_interfaces.interfaces.cli.console") as mock_console:
+            cli.help()
+            
+            # Check that help was displayed
+            assert mock_console.print.called
+            
+            # Get the call args to check content
+            call_args = mock_console.print.call_args_list
+            output_text = str(call_args)
+            
+            # Check for expected help content
+            assert "Available Commands:" in output_text or any("Available Commands:" in str(call) for call in call_args)
+
+    def test_help_with_specific_command(self) -> None:
+        """Test help for specific command."""
+        cli = CLIInterface()
+        
+        # Mock the console output
+        with patch("clean_interfaces.interfaces.cli.console") as mock_console:
+            cli.help("welcome")
+            
+            # Check that specific command help was displayed
+            assert mock_console.print.called

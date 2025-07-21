@@ -205,3 +205,103 @@ class TestCLIE2E:
 
         # Should produce output
         assert len(output) > 0  # type: ignore[arg-type]
+
+    def test_cli_dynamic_help_command(
+        self,
+        clean_env: dict[str, str],
+    ) -> None:
+        """Test that CLI dynamic help command works."""
+        # Use pexpect.run() to capture output
+        try:
+            result = pexpect.run(  # type: ignore[attr-defined]
+                f"{sys.executable} -u -m clean_interfaces.main help",
+                env=clean_env,  # type: ignore[arg-type]
+                withexitstatus=True,
+                timeout=5,
+                encoding="utf-8",
+            )
+            # pexpect.run returns (output, exitstatus) when withexitstatus=True
+            if isinstance(result, tuple):  # type: ignore[arg-type]
+                output, exitstatus = result  # type: ignore[misc]
+            else:
+                # Handle unexpected return format
+                output = str(result)
+                exitstatus = 0
+        except pexpect.TIMEOUT:
+            error_msg = "Timeout waiting for CLI help command to complete"
+            raise AssertionError(error_msg) from None
+
+        # Check exit code
+        assert exitstatus == 0
+
+        # Check help output contains expected content
+        assert "Available Commands:" in output
+        assert "welcome" in output
+        assert "help" in output
+
+    def test_cli_help_shows_all_commands(
+        self,
+        clean_env: dict[str, str],
+    ) -> None:
+        """Test that CLI help shows all available commands dynamically."""
+        # Use pexpect.run() to capture output
+        try:
+            result = pexpect.run(  # type: ignore[attr-defined]
+                f"{sys.executable} -u -m clean_interfaces.main help",
+                env=clean_env,  # type: ignore[arg-type]
+                withexitstatus=True,
+                timeout=5,
+                encoding="utf-8",
+            )
+            # pexpect.run returns (output, exitstatus) when withexitstatus=True
+            if isinstance(result, tuple):  # type: ignore[arg-type]
+                output, exitstatus = result  # type: ignore[misc]
+            else:
+                # Handle unexpected return format
+                output = str(result)
+                exitstatus = 0
+        except pexpect.TIMEOUT:
+            error_msg = "Timeout waiting for CLI help to show all commands"
+            raise AssertionError(error_msg) from None
+
+        # Check exit code
+        assert exitstatus == 0
+
+        # Check that all expected commands are listed
+        assert "welcome" in output
+        assert "help" in output
+        # Check for command descriptions
+        assert "Display welcome message" in output
+        assert "Show available commands and their usage" in output
+
+    def test_cli_help_with_specific_command(
+        self,
+        clean_env: dict[str, str],
+    ) -> None:
+        """Test that CLI help shows specific command details."""
+        # Use pexpect.run() to capture output
+        try:
+            result = pexpect.run(  # type: ignore[attr-defined]
+                f"{sys.executable} -u -m clean_interfaces.main help welcome",
+                env=clean_env,  # type: ignore[arg-type]
+                withexitstatus=True,
+                timeout=5,
+                encoding="utf-8",
+            )
+            # pexpect.run returns (output, exitstatus) when withexitstatus=True
+            if isinstance(result, tuple):  # type: ignore[arg-type]
+                output, exitstatus = result  # type: ignore[misc]
+            else:
+                # Handle unexpected return format
+                output = str(result)
+                exitstatus = 0
+        except pexpect.TIMEOUT:
+            error_msg = "Timeout waiting for CLI command-specific help"
+            raise AssertionError(error_msg) from None
+
+        # Check exit code
+        assert exitstatus == 0
+
+        # Check that specific command help is shown
+        assert "welcome" in output
+        assert "Display welcome message" in output
