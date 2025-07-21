@@ -57,7 +57,7 @@ class SwaggerAnalysisResponse(BaseModel):
         description="List of discovered interface classes",
     )
     models: list[str] = Field(
-        description="List of discovered model classes", 
+        description="List of discovered model classes",
     )
     endpoints: list[str] = Field(
         description="List of discovered API endpoints",

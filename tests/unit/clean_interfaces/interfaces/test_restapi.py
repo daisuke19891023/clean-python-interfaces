@@ -101,7 +101,7 @@ class TestRestAPISwaggerUIEndpoints:
         """Test that enhanced Swagger UI endpoint returns HTML response."""
         api = RestAPIInterface()
         client = TestClient(api.app)
-        
+
         response = client.get("/api/v1/swagger-ui")
         assert response.status_code == 200
         assert response.headers["content-type"].startswith("text/html")
@@ -110,11 +110,11 @@ class TestRestAPISwaggerUIEndpoints:
         """Test that Swagger UI schema endpoint returns JSON response."""
         api = RestAPIInterface()
         client = TestClient(api.app)
-        
+
         response = client.get("/api/v1/swagger-ui/schema")
         assert response.status_code == 200
         assert response.headers["content-type"] == "application/json"
-        
+
         schema = response.json()
         assert isinstance(schema, dict)
         assert "info" in schema
@@ -123,11 +123,11 @@ class TestRestAPISwaggerUIEndpoints:
         """Test that Swagger UI analysis endpoint returns JSON response."""
         api = RestAPIInterface()
         client = TestClient(api.app)
-        
+
         response = client.get("/api/v1/swagger-ui/analysis")
         assert response.status_code == 200
         assert response.headers["content-type"] == "application/json"
-        
+
         analysis = response.json()
         assert isinstance(analysis, dict)
         assert "interfaces" in analysis
@@ -137,10 +137,10 @@ class TestRestAPISwaggerUIEndpoints:
         """Test that schema includes dynamic content generation metadata."""
         api = RestAPIInterface()
         client = TestClient(api.app)
-        
+
         response = client.get("/api/v1/swagger-ui/schema")
         schema = response.json()
-        
+
         assert "info" in schema
         assert "dynamic_content" in schema["info"]
         assert "source_files_analyzed" in schema["info"]["dynamic_content"]
@@ -150,10 +150,10 @@ class TestRestAPISwaggerUIEndpoints:
         """Test that analysis includes interface type information."""
         api = RestAPIInterface()
         client = TestClient(api.app)
-        
+
         response = client.get("/api/v1/swagger-ui/analysis")
         analysis = response.json()
-        
+
         assert "interfaces" in analysis
         assert isinstance(analysis["interfaces"], list)
         assert len(analysis["interfaces"]) > 0

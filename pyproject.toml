@@ -156,5 +156,10 @@ markers = [
   "integration: marks integration tests"
 ]
 
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+]
+
 # [dependency-groups] section removed - all dev dependencies are in [project.optional-dependencies.dev]
 

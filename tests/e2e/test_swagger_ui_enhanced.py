@@ -32,12 +32,12 @@ class TestSwaggerUIEnhancedE2E:
         response = client.get("/api/v1/swagger-ui")
         assert response.status_code == 200
         assert response.headers["content-type"].startswith("text/html")
-        
+
         # Verify enhanced content includes dynamic documentation
         content = response.text.lower()
         assert "swagger-ui" in content
         assert "clean interfaces api" in content
-        
+
         # Verify dynamic content from source code is included
         assert "interface" in content or "restapi" in content
 
@@ -46,12 +46,12 @@ class TestSwaggerUIEnhancedE2E:
         response = client.get("/api/v1/swagger-ui/schema")
         assert response.status_code == 200
         assert response.headers["content-type"] == "application/json"
-        
+
         schema = response.json()
         assert "info" in schema
         assert "paths" in schema
         assert "components" in schema
-        
+
         # Verify enhanced metadata from dynamic content generation
         assert schema["info"]["title"] == "Clean Interfaces API"
         assert "dynamic_content" in schema["info"]
@@ -62,18 +62,18 @@ class TestSwaggerUIEnhancedE2E:
         """Test that enhanced Swagger UI includes analysis from source code."""
         response = client.get("/api/v1/swagger-ui/analysis")
         assert response.status_code == 200
-        
+
         analysis = response.json()
         assert "interfaces" in analysis
         assert "models" in analysis
         assert "endpoints" in analysis
         assert "documentation_files" in analysis
-        
+
         # Verify analysis includes current interfaces
         interfaces = analysis["interfaces"]
         assert len(interfaces) > 0
         assert any("restapi" in interface.lower() for interface in interfaces)
-        
+
         # Verify models analysis
         models = analysis["models"]
         assert len(models) > 0
@@ -85,21 +85,21 @@ class TestSwaggerUIEnhancedE2E:
         analysis_response = client.get("/api/v1/swagger-ui/analysis")
         assert analysis_response.status_code == 200
         analysis = analysis_response.json()
-        
+
         # 2. Get enhanced schema based on analysis
         schema_response = client.get("/api/v1/swagger-ui/schema")
         assert schema_response.status_code == 200
         schema = schema_response.json()
-        
+
         # 3. Get enhanced UI that uses the schema
         ui_response = client.get("/api/v1/swagger-ui")
         assert ui_response.status_code == 200
-        
+
         # Verify workflow coherence
         assert len(analysis["interfaces"]) > 0
         assert schema["info"]["dynamic_content"]["source_files_analyzed"] > 0
         assert "swagger-ui" in ui_response.text.lower()
-        
+
         # Verify that the UI includes references to analyzed content
         ui_content = ui_response.text.lower()
         for interface in analysis["interfaces"]:
