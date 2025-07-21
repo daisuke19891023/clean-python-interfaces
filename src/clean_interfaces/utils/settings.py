@@ -191,3 +191,92 @@ def reset_interface_settings() -> None:
     This is mainly useful for testing.
     """
     InterfaceSettings.instance = None
+
+
+class JobSettings(BaseSettings):
+    """Job management system configuration settings."""
+
+    instance: ClassVar[Any] = None
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+    )
+
+    job_manager_type: str = Field(
+        default="memory",
+        description="Type of job manager to use (memory)",
+    )
+
+    max_concurrent_jobs: int = Field(
+        default=10,
+        description="Maximum number of concurrent jobs",
+        ge=1,
+    )
+
+    job_timeout_seconds: int = Field(
+        default=3600,
+        description="Default job timeout in seconds",
+        ge=1,
+    )
+
+    queue_size_limit: int = Field(
+        default=1000,
+        description="Maximum number of jobs in queue",
+        ge=1,
+    )
+
+    cleanup_completed_jobs_after_seconds: int = Field(
+        default=86400,
+        description="Cleanup completed jobs after this many seconds (0 = no cleanup)",
+        ge=0,
+    )
+
+    @field_validator("job_manager_type")
+    @classmethod
+    def validate_job_manager_type(cls, v: str) -> str:
+        """Validate job manager type value."""
+        from clean_interfaces.jobs.types import JobManagerType
+
+        try:
+            # Validate that it's a valid job manager type
+            JobManagerType(v.lower())
+            return v.lower()
+        except ValueError:
+            valid_types = [t.value for t in JobManagerType]
+            msg = f"Invalid job manager type: {v}. Must be one of {valid_types}"
+            raise ValueError(msg) from None
+
+    @property
+    def job_manager_type_enum(self) -> Any:
+        """Get job manager type as enum."""
+        from clean_interfaces.jobs.types import JobManagerType
+
+        return JobManagerType(self.job_manager_type)
+
+    def model_dump(self, **kwargs: Any) -> dict[str, Any]:
+        """Dump model including computed properties."""
+        data = super().model_dump(**kwargs)
+        data["job_manager_type_enum"] = self.job_manager_type_enum
+        return data
+
+
+def get_job_settings() -> JobSettings:
+    """Get the global job settings instance.
+
+    Returns:
+        JobSettings: The job settings instance
+    """
+    if JobSettings.instance is None:
+        JobSettings.instance = JobSettings()
+    return JobSettings.instance
+
+
+def reset_job_settings() -> None:
+    """Reset the global job settings instance.
+
+    This is mainly useful for testing.
+    """
+    JobSettings.instance = None

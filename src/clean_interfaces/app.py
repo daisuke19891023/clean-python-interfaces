@@ -9,8 +9,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from clean_interfaces.interfaces.factory import InterfaceFactory
+from clean_interfaces.jobs.factory import JobManagerFactory
 from clean_interfaces.utils.logger import configure_logging, get_logger
-from clean_interfaces.utils.settings import get_interface_settings, get_settings
+from clean_interfaces.utils.settings import get_interface_settings, get_job_settings, get_settings
 
 
 class Application:
@@ -45,23 +46,45 @@ class Application:
         self.interface_factory = InterfaceFactory()
         self.interface = self.interface_factory.create_from_settings()
 
+        # Initialize job manager
+        self.job_manager_factory = JobManagerFactory()
+        self.job_manager = self.job_manager_factory.create_from_settings()
+
         self.logger.info(
             "Application initialized",
             interface=self.interface.name,
-            settings=get_interface_settings().model_dump(),
+            job_manager=self.job_manager.manager_type.value,
+            interface_settings=get_interface_settings().model_dump(),
+            job_settings=get_job_settings().model_dump(),
             dotenv_loaded=str(dotenv_path) if dotenv_path else "default",
         )
 
     def run(self) -> None:
         """Run the application."""
-        self.logger.info("Starting application", interface=self.interface.name)
+        self.logger.info(
+            "Starting application",
+            interface=self.interface.name,
+            job_manager=self.job_manager.manager_type.value
+        )
 
         try:
+            # Start job manager first
+            import asyncio
+            asyncio.run(self.job_manager.start())
+            
+            # Then run the interface
             self.interface.run()
         except Exception as e:
             self.logger.error("Application error", error=str(e))
             raise
         finally:
+            # Stop job manager
+            try:
+                import asyncio
+                asyncio.run(self.job_manager.stop())
+            except Exception as stop_error:
+                self.logger.error("Error stopping job manager", error=str(stop_error))
+            
             self.logger.info("Application shutting down")
 
 

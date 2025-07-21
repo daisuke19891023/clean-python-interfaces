@@ -8,3 +8,9 @@ class InterfaceType(str, Enum):
 
     CLI = "cli"
     RESTAPI = "restapi"
+
+
+class JobManagerType(str, Enum):
+    """Available job manager types."""
+
+    MEMORY = "memory"
