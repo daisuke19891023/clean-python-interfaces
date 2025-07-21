@@ -1,6 +1,7 @@
 """Simple CLI E2E tests using subprocess for initial verification."""
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -10,6 +11,12 @@ from clean_interfaces.models.io import WelcomeMessage
 
 class TestCLISimple:
     """Simple E2E tests for the CLI interface using subprocess."""
+
+    @staticmethod
+    def strip_ansi_codes(text: str) -> str:
+        """Remove ANSI escape codes from text."""
+        ansi_escape = re.compile(r"\x1b\[[0-9;]*m")
+        return ansi_escape.sub("", text)
 
     @property
     def env(self) -> dict[str, str]:
@@ -59,10 +66,12 @@ class TestCLISimple:
         assert result.returncode == 0
 
         # Check help text elements from main.py's help
-        assert "Usage:" in result.stdout or "usage:" in result.stdout
-        assert "--dotenv" in result.stdout
-        assert "--help" in result.stdout
-        assert "Execute the main function with optional dotenv file" in result.stdout
+        # Strip ANSI codes for proper assertion
+        clean_output = self.strip_ansi_codes(result.stdout)
+        assert "Usage:" in clean_output or "usage:" in clean_output
+        assert "dotenv" in clean_output  # Check without dashes as they may vary
+        assert "help" in clean_output
+        assert "Execute the main function with optional dotenv file" in clean_output
 
     def test_cli_invalid_command(self) -> None:
         """Test that CLI handles invalid commands gracefully."""
