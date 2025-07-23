@@ -48,3 +48,46 @@ class ErrorResponse(BaseModel):
     status_code: int = Field(
         description="HTTP status code",
     )
+
+
+class SwaggerAnalysisResponse(BaseModel):
+    """Swagger UI source code analysis response model."""
+
+    interfaces: list[str] = Field(
+        description="List of discovered interface classes",
+    )
+    models: list[str] = Field(
+        description="List of discovered model classes",
+    )
+    endpoints: list[str] = Field(
+        description="List of discovered API endpoints",
+    )
+    documentation_files: list[str] = Field(
+        description="List of documentation files found",
+    )
+    summary: dict[str, int] = Field(
+        description="Summary statistics of analysis",
+    )
+
+
+class DynamicContentMetadata(BaseModel):
+    """Dynamic content generation metadata model."""
+
+    source_files_analyzed: int = Field(
+        description="Number of source files analyzed",
+    )
+    documentation_files_found: int = Field(
+        description="Number of documentation files found",
+    )
+    interfaces_discovered: int = Field(
+        description="Number of interfaces discovered",
+    )
+    models_discovered: int = Field(
+        description="Number of models discovered",
+    )
+    endpoints_analyzed: int = Field(
+        description="Number of endpoints analyzed",
+    )
+    generation_timestamp: str = Field(
+        description="Timestamp of content generation",
+    )
