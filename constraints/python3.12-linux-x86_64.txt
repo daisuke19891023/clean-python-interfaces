@@ -57,7 +57,7 @@ colorlog==6.9.0
     # via nox
 commitizen==4.8.3
     # via testproject (pyproject.toml)
-coverage==7.9.2
+coverage==7.10.1
     # via pytest-cov
 cryptography==45.0.5
     # via secretstorage
