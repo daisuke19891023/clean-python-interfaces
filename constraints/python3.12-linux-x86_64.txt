@@ -24,7 +24,7 @@ boolean-py==5.0
     # via license-expression
 cachecontrol==0.14.3
     # via pip-audit
-certifi==2025.7.14
+certifi==2025.8.3
     # via
     #   httpcore
     #   httpx
