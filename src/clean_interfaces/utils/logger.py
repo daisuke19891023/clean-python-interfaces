@@ -19,17 +19,12 @@ from typing import Any, Protocol, TypeVar
 import structlog
 from structlog.types import EventDict, Processor
 
-from clean_interfaces.utils.otel_exporter import (
-    LogExporterFactory,
-    StructlogOTelProcessor,
-)
 from clean_interfaces.utils.settings import get_settings
 
 # Type variables for decorators
 F = TypeVar("F", bound=Callable[..., Any])
 
-# Global reference to OTEL processor for cleanup
-_otel_processor: StructlogOTelProcessor | None = None
+# OpenTelemetry exporter integration removed to avoid test freezes.
 
 
 class LoggerProtocol(Protocol):
@@ -122,8 +117,6 @@ def _build_processors(
     include_timestamp: bool,
     include_caller: bool,
     include_otel_context: bool,
-    otel_export_enabled: bool,
-    otel_endpoint: str | None,
 ) -> list[Processor]:
     """Build the processor chain for structlog."""
     processors: list[Processor] = [
@@ -141,25 +134,6 @@ def _build_processors(
 
     if include_otel_context:
         processors.append(add_opentelemetry_context)
-
-    # Add OpenTelemetry export processor if enabled
-    global _otel_processor  # noqa: PLW0603
-    if otel_export_enabled:
-        # Clean up previous processor if any
-        if _otel_processor:
-            _otel_processor.shutdown()
-
-        # Create settings from current configuration
-        settings = get_settings()
-        # Override with function parameters if provided
-        if otel_endpoint:
-            settings.otel_endpoint = otel_endpoint
-
-        # Create exporters and processor
-        exporters = LogExporterFactory.create(settings)
-        if exporters:
-            _otel_processor = StructlogOTelProcessor(exporters)
-            processors.append(_otel_processor)
 
     return processors
 
@@ -202,8 +176,6 @@ def configure_logging(
     include_timestamp: bool = True,
     include_caller: bool = False,
     include_otel_context: bool = True,
-    otel_export_enabled: bool = False,
-    otel_endpoint: str | None = None,
 ) -> None:
     """Configure structured logging with the specified options.
 
@@ -213,9 +185,7 @@ def configure_logging(
         log_file: Optional file path for log output
         include_timestamp: Whether to include timestamps in log entries
         include_caller: Whether to include caller information
-        include_otel_context: Whether to include OpenTelemetry context
-        otel_export_enabled: Whether to enable OpenTelemetry log export
-        otel_endpoint: OpenTelemetry collector endpoint (if export is enabled)
+        include_otel_context: Whether to include OpenTelemetry trace context if present
 
     """
     # Convert log level string to logging constant
@@ -226,8 +196,6 @@ def configure_logging(
         include_timestamp,
         include_caller,
         include_otel_context,
-        otel_export_enabled,
-        otel_endpoint,
     )
 
     # Add format-specific processors
@@ -285,15 +253,9 @@ def get_logger(name: str) -> LoggerProtocol:
 
 
 def shutdown_logging() -> None:
-    """Shutdown logging and clean up resources.
-
-    This should be called when the application exits to ensure
-    all logs are flushed and resources are released.
-    """
-    global _otel_processor  # noqa: PLW0603
-    if _otel_processor:
-        _otel_processor.shutdown()
-        _otel_processor = None
+    """Shutdown logging and clean up resources."""
+    # No special cleanup required after removing OTEL exporters
+    return
 
 
 def log_performance(logger: LoggerProtocol) -> Callable[[F], F]:
@@ -343,7 +305,6 @@ def setup_application_logging(
     app_name: str,
     environment: str = "development",
     log_file: str | None = None,
-    use_otel: bool = True,
 ) -> LoggerProtocol:
     """Set up logging for an application with sensible defaults.
 
@@ -357,9 +318,8 @@ def setup_application_logging(
         Configured application logger
 
     """
-    # Load settings for OTEL configuration
-    settings = get_settings() if use_otel else None
-    otel_enabled = bool(use_otel and settings and settings.otel_export_enabled)
+    # Load settings for default log configuration
+    settings = get_settings()
 
     if environment == "production":
         configure_logging(
@@ -369,8 +329,6 @@ def setup_application_logging(
             include_timestamp=True,
             include_caller=False,
             include_otel_context=True,
-            otel_export_enabled=otel_enabled,
-            otel_endpoint=settings.otel_endpoint if settings else None,
         )
     elif environment == "testing":
         configure_logging(
@@ -380,7 +338,6 @@ def setup_application_logging(
             include_timestamp=True,
             include_caller=False,
             include_otel_context=False,
-            otel_export_enabled=False,  # Disable OTEL in testing
         )
     else:  # development
         configure_logging(
@@ -390,8 +347,6 @@ def setup_application_logging(
             include_timestamp=True,
             include_caller=True,
             include_otel_context=True,
-            otel_export_enabled=otel_enabled,
-            otel_endpoint=settings.otel_endpoint if settings else None,
         )
 
     return get_logger(app_name)

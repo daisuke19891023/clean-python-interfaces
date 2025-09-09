@@ -6,9 +6,9 @@ Get up and running with Clean Interfaces in minutes!
 
 Before you begin, ensure you have:
 
-- ✅ Python 3.12 or higher installed
-- ✅ uv package manager installed
-- ✅ Git (for cloning the repository)
+-   ✅ Python 3.13 or higher installed
+-   ✅ uv package manager installed
+-   ✅ Git (for cloning the repository)
 
 ## 5-Minute Setup
 
@@ -137,11 +137,11 @@ uv run python -m clean_interfaces.main --dotenv prod.env
 
 ```json
 {
-  "timestamp": "2025-07-20T10:30:45.123Z",
-  "level": "info",
-  "logger": "clean_interfaces.app",
-  "message": "Application initialized",
-  "interface": "restapi"
+    "timestamp": "2025-07-20T10:30:45.123Z",
+    "level": "info",
+    "logger": "clean_interfaces.app",
+    "message": "Application initialized",
+    "interface": "restapi"
 }
 ```
 
@@ -185,22 +185,25 @@ uv run python -m clean_interfaces.main --dotenv prod.env
 Now that you have Clean Interfaces running:
 
 1. **Explore the Interfaces**
-   - [CLI Interface Guide](guides/cli.md)
-   - [REST API Interface Guide](guides/restapi.md)
+
+    - [CLI Interface Guide](guides/cli.md)
+    - [REST API Interface Guide](guides/restapi.md)
 
 2. **Learn About Configuration**
-   - [Configuration Guide](configuration.md)
-   - [Environment Variables](guides/environment.md)
+
+    - [Configuration Guide](configuration.md)
+    - [Environment Variables](guides/environment.md)
 
 3. **Understand Logging**
-   - [Logging Guide](guides/logging.md)
+
+    - [Logging Guide](guides/logging.md)
 
 4. **Start Developing**
-   - [Development Guide](development/contributing.md)
-   - [API Reference](api/overview.md)
+    - [Development Guide](development/contributing.md)
+    - [API Reference](api/overview.md)
 
 ## Getting Help
 
-- 📖 Check the [full documentation](index.md)
-- 🐛 Report issues on [GitHub](https://github.com/your-username/clean-interfaces/issues)
-- 💬 Ask questions in [Discussions](https://github.com/your-username/clean-interfaces/discussions)
+-   📖 Check the [full documentation](index.md)
+-   🐛 Report issues on [GitHub](https://github.com/your-username/clean-interfaces/issues)
+-   💬 Ask questions in [Discussions](https://github.com/your-username/clean-interfaces/discussions)

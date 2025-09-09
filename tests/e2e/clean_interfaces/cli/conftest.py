@@ -165,7 +165,7 @@ class CLIRunner:
 
 
 @pytest.fixture
-def cli_runner() -> Generator[CLIRunner, None, None]:
+def cli_runner() -> Generator[CLIRunner]:
     """Provide a CLI runner for tests.
 
     Yields:

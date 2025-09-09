@@ -22,7 +22,7 @@ Features
 * **Multiple Interface Types**: Support for CLI and REST API interfaces
 * **Flexible Configuration**: Environment-based configuration with ``.env`` file support
 * **Structured Logging**: Advanced logging with OpenTelemetry integration
-* **Modern Python**: Built with Python 3.12+ and modern tooling
+* **Modern Python**: Built with Python 3.13+ and modern tooling
 * **Comprehensive Testing**: Unit, API, and E2E test coverage
 * **Type Safety**: Full type hints with strict Pyright checking
 

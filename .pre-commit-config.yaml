@@ -3,7 +3,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 
 default_language_version:
-  python: python3.12
+  python: python3.13
 
 repos:
   # All hooks use nox to ensure consistency with project configuration
@@ -16,7 +16,7 @@ repos:
         language: system
         types_or: [python, pyi]
         pass_filenames: false
-        
+
       # Ruff linter
       - id: ruff-lint
         name: Lint with ruff (via nox)
@@ -74,7 +74,7 @@ ci:
   autofix_prs: true
   autofix_commit_msg: |
     [pre-commit.ci] auto fixes from pre-commit.com hooks
-    
+
     for more information, see https://pre-commit.ci
   autoupdate_schedule: weekly
   autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'

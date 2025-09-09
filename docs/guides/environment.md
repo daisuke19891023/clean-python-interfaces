@@ -31,21 +31,7 @@ export LOG_FILE=/var/log/app.log  # Path to log file
 
 ### OpenTelemetry Configuration
 
-```bash
-# Enable OpenTelemetry
-export OTEL_EXPORT_ENABLED=true
-
-# Export mode
-export OTEL_EXPORT_MODE=otlp  # file, otlp, or both
-
-# File export
-export OTEL_LOG_FILE=/var/log/otel.log
-
-# OTLP endpoint
-export OTEL_ENDPOINT=http://localhost:4317
-export OTEL_HEADERS="api-key=your-key,another-header=value"
-export OTEL_TIMEOUT=30
-```
+OpenTelemetry exporter configuration has been removed. The application ignores `OTEL_*` variables; trace context may still be included if OTEL is present.
 
 ## Using .env Files
 
@@ -120,13 +106,8 @@ LOG_LEVEL=INFO
 LOG_FORMAT=json
 LOG_FILE=
 
-# OpenTelemetry Configuration
-OTEL_EXPORT_ENABLED=false
-OTEL_EXPORT_MODE=file
-OTEL_LOG_FILE=
-OTEL_ENDPOINT=
-OTEL_HEADERS=
-OTEL_TIMEOUT=30
+# OpenTelemetry Configuration (deprecated)
+# OTEL_* variables are ignored by the application
 
 # REST API Configuration (when INTERFACE_TYPE=restapi)
 HOST=0.0.0.0
@@ -159,6 +140,6 @@ LOG_LEVEL=DEBUG python -m clean_interfaces.main
 
 ## Next Steps
 
-- Learn about [Logging](logging.md) configuration options
-- Explore the [REST API](restapi.md) environment variables
-- See the [Configuration](../configuration.md) overview
+-   Learn about [Logging](logging.md) configuration options
+-   Explore the [REST API](restapi.md) environment variables
+-   See the [Configuration](../configuration.md) overview

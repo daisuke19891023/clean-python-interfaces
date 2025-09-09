@@ -4,8 +4,8 @@ This guide covers the installation of Clean Interfaces.
 
 ## Requirements
 
-- Python 3.12 or higher
-- uv (Python package manager)
+-   Python 3.13 or higher
+-   uv (Python package manager)
 
 ## Installing uv
 
@@ -56,7 +56,7 @@ If you don't have uv installed, you can install it using:
 ### From PyPI
 
 !!! note "Coming Soon"
-    PyPI package installation will be available once the package is published.
+PyPI package installation will be available once the package is published.
 
 ```bash
 # Basic installation
@@ -123,6 +123,6 @@ uv run python -m clean_interfaces.main --dotenv /path/to/your/.env
 
 ## Next Steps
 
-- Read the [Quick Start](quickstart.md) guide
-- Learn about [Configuration](configuration.md)
-- Explore the [CLI Interface](guides/cli.md) or [REST API Interface](guides/restapi.md)
+-   Read the [Quick Start](quickstart.md) guide
+-   Learn about [Configuration](configuration.md)
+-   Explore the [CLI Interface](guides/cli.md) or [REST API Interface](guides/restapi.md)

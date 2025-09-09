@@ -4,14 +4,14 @@ Welcome to **Clean Interfaces** - a flexible Python application framework with m
 
 ## Features
 
-- 🚀 **Multiple Interface Types**: Support for CLI and REST API interfaces
-- ⚙️ **Flexible Configuration**: Environment-based configuration with `.env` file support
-- 📝 **Structured Logging**: Advanced logging with OpenTelemetry integration
-- 🐍 **Modern Python**: Built with Python 3.12+ and modern tooling
-- ✅ **Comprehensive Testing**: Unit, API, and E2E test coverage
-- 🔍 **Type Safety**: Full type hints with strict Pyright checking
-- 🎨 **Code Quality**: Automated linting and formatting with Ruff
-- 📦 **Dependency Management**: Managed with uv for fast, reliable builds
+-   🚀 **Multiple Interface Types**: Support for CLI and REST API interfaces
+-   ⚙️ **Flexible Configuration**: Environment-based configuration with `.env` file support
+-   📝 **Structured Logging**: Advanced logging with OpenTelemetry integration
+-   🐍 **Modern Python**: Built with Python 3.13+ and modern tooling
+-   ✅ **Comprehensive Testing**: Unit, API, and E2E test coverage
+-   🔍 **Type Safety**: Full type hints with strict Pyright checking
+-   🎨 **Code Quality**: Automated linting and formatting with Ruff
+-   📦 **Dependency Management**: Managed with uv for fast, reliable builds
 
 ## Quick Start
 
@@ -42,17 +42,17 @@ Clean Interfaces provides a clean, extensible architecture for building Python a
 
 ### Key Components
 
-- **Interface System**: Factory pattern for creating different interface types
-- **Configuration Management**: Pydantic-based settings with environment variable support
-- **Logging System**: Structured logging with multiple output formats and OpenTelemetry integration
-- **Type Safety**: Full type annotations with strict checking
+-   **Interface System**: Factory pattern for creating different interface types
+-   **Configuration Management**: Pydantic-based settings with environment variable support
+-   **Logging System**: Structured logging with multiple output formats and OpenTelemetry integration
+-   **Type Safety**: Full type annotations with strict checking
 
 ## Documentation Structure
 
-- **[Getting Started](installation.md)**: Installation and quick start guides
-- **[User Guide](guides/cli.md)**: Detailed guides for using the framework
-- **[API Reference](api/overview.md)**: Complete API documentation
-- **[Development](development/contributing.md)**: Contributing and development guides
+-   **[Getting Started](installation.md)**: Installation and quick start guides
+-   **[User Guide](guides/cli.md)**: Detailed guides for using the framework
+-   **[API Reference](api/overview.md)**: Complete API documentation
+-   **[Development](development/contributing.md)**: Contributing and development guides
 
 ## Development Commands
 

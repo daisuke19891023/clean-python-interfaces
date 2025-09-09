@@ -58,4 +58,3 @@ Utility Modules
    clean_interfaces.utils.logger
    clean_interfaces.utils.settings
    clean_interfaces.utils.file_handler
-   clean_interfaces.utils.otel_exporter

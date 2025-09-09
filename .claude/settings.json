@@ -58,8 +58,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "/workspace/.claude/hooks/python_quality_check.sh",
-                        "decision": "block"
+                        "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/python_quality_check.sh"
                     }
                 ]
             }
@@ -69,8 +68,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": ".claude/hooks/python_final_quality_check.sh",
-                        "decision": "block"
+                        "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/python_quality_check.sh"
                     }
                 ]
             }
@@ -80,8 +78,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "/workspace/.claude/hooks/python_final_quality_check.sh",
-                        "decision": "block"
+                        "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/python_final_quality_check.sh"
                     }
                 ]
             }
