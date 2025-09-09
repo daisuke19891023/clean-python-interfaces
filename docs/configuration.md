@@ -37,26 +37,21 @@ uv run python -m clean_interfaces.main --dotenv production.env
 
 ### Core Settings
 
-| Variable | Description | Default | Options |
-|----------|-------------|---------|---------|
-| `INTERFACE_TYPE` | Interface to use | `cli` | `cli`, `restapi` |
+| Variable         | Description      | Default | Options          |
+| ---------------- | ---------------- | ------- | ---------------- |
+| `INTERFACE_TYPE` | Interface to use | `cli`   | `cli`, `restapi` |
 
 ### Logging Configuration
 
-| Variable | Description | Default | Options |
-|----------|-------------|---------|---------|
-| `LOG_LEVEL` | Logging verbosity | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
-| `LOG_FORMAT` | Output format | `json` | `json`, `console`, `plain` |
-| `LOG_FILE_PATH` | Log file location | None | Any valid file path |
+| Variable        | Description       | Default | Options                                         |
+| --------------- | ----------------- | ------- | ----------------------------------------------- |
+| `LOG_LEVEL`     | Logging verbosity | `INFO`  | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
+| `LOG_FORMAT`    | Output format     | `json`  | `json`, `console`, `plain`                      |
+| `LOG_FILE_PATH` | Log file location | None    | Any valid file path                             |
 
 ### OpenTelemetry Configuration
 
-| Variable | Description | Default | Options |
-|----------|-------------|---------|---------|
-| `OTEL_LOGS_EXPORT_MODE` | Export mode | `file` | `file`, `otlp`, `both` |
-| `OTEL_ENDPOINT` | Collector endpoint | `http://localhost:4317` | Any valid URL |
-| `OTEL_SERVICE_NAME` | Service identifier | `clean-interfaces` | Any string |
-| `OTEL_EXPORT_TIMEOUT` | Timeout in ms | `30000` | Positive integer |
+OpenTelemetry exporter configuration has been removed. `OTEL_*` variables are not used by the application. Trace context (if OTEL is present) may appear in logs but no export is performed.
 
 ## Configuration Precedence
 
@@ -77,13 +72,14 @@ Configuration values are loaded in the following order (later values override ea
 INTERFACE_TYPE=cli
 LOG_LEVEL=DEBUG
 LOG_FORMAT=console
-OTEL_LOGS_EXPORT_MODE=file
+# OpenTelemetry exporter removed
 ```
 
 **Features:**
-- Verbose logging for debugging
-- Human-readable console output
-- Local file logging only
+
+-   Verbose logging for debugging
+-   Human-readable console output
+-   Local file logging only
 
 ### Testing Configuration
 
@@ -96,9 +92,10 @@ LOG_FILE_PATH=tests/logs/test.log
 ```
 
 **Features:**
-- Reduced logging noise
-- Structured output for parsing
-- Separate test log file
+
+-   Reduced logging noise
+-   Structured output for parsing
+-   Separate test log file
 
 ### Production Configuration
 
@@ -108,16 +105,15 @@ INTERFACE_TYPE=restapi
 LOG_LEVEL=ERROR
 LOG_FORMAT=json
 LOG_FILE_PATH=/var/log/clean-interfaces/app.log
-OTEL_LOGS_EXPORT_MODE=otlp
-OTEL_ENDPOINT=http://otel-collector:4317
-OTEL_SERVICE_NAME=clean-interfaces-prod
+# OpenTelemetry exporter removed
 ```
 
 **Features:**
-- Minimal logging overhead
-- Structured JSON for log aggregation
-- OpenTelemetry export for monitoring
-- Persistent log files
+
+-   Minimal logging overhead
+-   Structured JSON for log aggregation
+-   OpenTelemetry export for monitoring
+-   Persistent log files
 
 ## Advanced Configuration
 
@@ -141,9 +137,9 @@ run_app()
 
 All configuration values are validated on startup:
 
-- **Type validation**: Ensures correct data types
-- **Value validation**: Checks for valid options
-- **Range validation**: Validates numeric ranges
+-   **Type validation**: Ensures correct data types
+-   **Value validation**: Checks for valid options
+-   **Range validation**: Validates numeric ranges
 
 Invalid configurations will raise clear error messages:
 
@@ -156,19 +152,21 @@ ValueError: Invalid log level: TRACE. Must be one of {'DEBUG', 'INFO', 'WARNING'
 To debug configuration issues:
 
 1. **Check loaded values**:
-   ```bash
-   LOG_LEVEL=DEBUG uv run python -m clean_interfaces.main
-   ```
+
+    ```bash
+    LOG_LEVEL=DEBUG uv run python -m clean_interfaces.main
+    ```
 
 2. **Verify .env file**:
-   ```bash
-   cat .env
-   ```
+
+    ```bash
+    cat .env
+    ```
 
 3. **Check environment**:
-   ```bash
-   env | grep -E '^(LOG_|OTEL_|INTERFACE_)'
-   ```
+    ```bash
+    env | grep -E '^(LOG_|OTEL_|INTERFACE_)'
+    ```
 
 ## Best Practices
 
@@ -232,31 +230,34 @@ uv run python -m clean_interfaces.main --dotenv prod.env
 
 **Problem**: Changes to `.env` not taking effect
 
-**Solution**: 
-- Ensure file is in project root
-- Check file permissions
-- Use `--dotenv` to specify path explicitly
+**Solution**:
+
+-   Ensure file is in project root
+-   Check file permissions
+-   Use `--dotenv` to specify path explicitly
 
 ### Invalid Configuration Values
 
 **Problem**: Application fails with configuration errors
 
 **Solution**:
-- Check spelling of option names
-- Verify values match allowed options
-- Review error message for valid choices
+
+-   Check spelling of option names
+-   Verify values match allowed options
+-   Review error message for valid choices
 
 ### Environment Variable Conflicts
 
 **Problem**: Unexpected configuration values
 
 **Solution**:
-- Check system environment variables
-- Use `env | grep PATTERN` to debug
-- Explicitly unset conflicting variables
+
+-   Check system environment variables
+-   Use `env | grep PATTERN` to debug
+-   Explicitly unset conflicting variables
 
 ## Next Steps
 
-- Learn about [Logging Configuration](guides/logging.md)
-- Explore [Environment Variables](guides/environment.md)
-- Read about [Interface Types](guides/cli.md)
+-   Learn about [Logging Configuration](guides/logging.md)
+-   Explore [Environment Variables](guides/environment.md)
+-   Read about [Interface Types](guides/cli.md)

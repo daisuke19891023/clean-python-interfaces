@@ -77,10 +77,10 @@ class TestRestAPIInterface:
 
 
 class TestRestAPISwaggerUIEndpoints:
-    """Test enhanced Swagger UI endpoints in RestAPI interface."""
+    """Test Swagger UI endpoints in RestAPI interface."""
 
-    def test_enhanced_swagger_ui_endpoint_exists(self) -> None:
-        """Test that enhanced Swagger UI endpoint is registered."""
+    def test_swagger_ui_endpoint_exists(self) -> None:
+        """Test that Swagger UI endpoint is registered."""
         api = RestAPIInterface()
         routes = [route.path for route in api.app.routes]  # type: ignore[attr-defined]
         assert "/api/v1/swagger-ui" in routes
@@ -97,8 +97,8 @@ class TestRestAPISwaggerUIEndpoints:
         routes = [route.path for route in api.app.routes]  # type: ignore[attr-defined]
         assert "/api/v1/swagger-ui/analysis" in routes
 
-    def test_enhanced_swagger_ui_returns_html(self) -> None:
-        """Test that enhanced Swagger UI endpoint returns HTML response."""
+    def test_swagger_ui_returns_html(self) -> None:
+        """Test that Swagger UI endpoint returns HTML response."""
         api = RestAPIInterface()
         client = TestClient(api.app)
 

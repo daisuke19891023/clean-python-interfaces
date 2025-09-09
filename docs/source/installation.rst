@@ -6,7 +6,7 @@ This guide covers the installation of Clean Interfaces.
 Requirements
 ------------
 
-* Python 3.12 or higher
+* Python 3.13 or higher
 * uv (Python package manager)
 
 Installing uv

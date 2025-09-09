@@ -4,14 +4,14 @@ A flexible Python application framework with multiple interface types and compre
 
 ## Features
 
-- **Multiple Interface Types**: Support for CLI and REST API interfaces
-- **Flexible Configuration**: Environment-based configuration with `.env` file support
-- **Structured Logging**: Advanced logging with OpenTelemetry integration
-- **Modern Python**: Built with Python 3.12+ and modern tooling
-- **Comprehensive Testing**: Unit, API, and E2E test coverage
-- **Type Safety**: Full type hints with strict Pyright checking
-- **Code Quality**: Automated linting and formatting with Ruff
-- **Dependency Management**: Managed with uv for fast, reliable builds
+-   **Multiple Interface Types**: Support for CLI and REST API interfaces
+-   **Flexible Configuration**: Environment-based configuration with `.env` file support
+-   **Structured Logging**: Advanced logging with OpenTelemetry integration
+-   **Modern Python**: Built with Python 3.13+ and modern tooling
+-   **Comprehensive Testing**: Unit, API, and E2E test coverage
+-   **Type Safety**: Full type hints with strict Pyright checking
+-   **Code Quality**: Automated linting and formatting with Ruff
+-   **Dependency Management**: Managed with uv for fast, reliable builds
 
 ## Project Structure
 
@@ -37,7 +37,7 @@ clean-interfaces/
 │       ├── __init__.py
 │       ├── file_handler.py    # File handling utilities
 │       ├── logger.py          # Structured logging setup
-│       ├── otel_exporter.py   # OpenTelemetry integration
+│       ├── otel_exporter.py   # (removed) OpenTelemetry exporter (removed for stability)
 │       └── settings.py        # Application settings
 ├── tests/                      # Test suite
 │   ├── unit/                  # Unit tests
@@ -57,8 +57,8 @@ clean-interfaces/
 
 ### Prerequisites
 
-- Python 3.12 or higher
-- uv (Python package manager)
+-   Python 3.13 or higher
+-   uv (Python package manager)
 
 ### Installation
 
@@ -95,16 +95,13 @@ uv run python -m clean_interfaces.main --help
 
 Configuration is managed through environment variables. See `.env.example` for all available options:
 
-| Variable | Description | Default | Options |
-|----------|-------------|---------|---------|
-| `INTERFACE_TYPE` | Interface to use | `cli` | `cli`, `restapi` |
-| `LOG_LEVEL` | Logging level | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
-| `LOG_FORMAT` | Log output format | `json` | `json`, `console`, `plain` |
-| `LOG_FILE_PATH` | Log file path | None | Any valid file path |
-| `OTEL_LOGS_EXPORT_MODE` | OpenTelemetry export mode | `file` | `file`, `otlp`, `both` |
-| `OTEL_ENDPOINT` | OTLP collector endpoint | `http://localhost:4317` | Any valid URL |
-| `OTEL_SERVICE_NAME` | Service name | `clean-interfaces` | Any string |
-| `OTEL_EXPORT_TIMEOUT` | Export timeout (ms) | `30000` | Positive integer |
+| Variable         | Description                                  | Default | Options                                         |
+| ---------------- | -------------------------------------------- | ------- | ----------------------------------------------- |
+| `INTERFACE_TYPE` | Interface to use                             | `cli`   | `cli`, `restapi`                                |
+| `LOG_LEVEL`      | Logging level                                | `INFO`  | `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` |
+| `LOG_FORMAT`     | Log output format                            | `json`  | `json`, `console`, `plain`                      |
+| `LOG_FILE_PATH`  | Log file path                                | None    | Any valid file path                             |
+| `OTEL_*`         | [Deprecated] OpenTelemetry exporter settings | -       | Removed                                         |
 
 ### Using Custom Environment Files
 
@@ -135,15 +132,15 @@ uv run pre-commit install
 
 ### Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `nox -s lint` | Run code linting |
-| `nox -s format_code` | Format code |
-| `nox -s typing` | Run type checking |
-| `nox -s test` | Run all tests |
-| `nox -s security` | Run security checks |
-| `nox -s docs` | Build documentation |
-| `nox -s ci` | Run all CI checks |
+| Command              | Description         |
+| -------------------- | ------------------- |
+| `nox -s lint`        | Run code linting    |
+| `nox -s format_code` | Format code         |
+| `nox -s typing`      | Run type checking   |
+| `nox -s test`        | Run all tests       |
+| `nox -s security`    | Run security checks |
+| `nox -s docs`        | Build documentation |
+| `nox -s ci`          | Run all CI checks   |
 
 ### Testing
 
@@ -162,11 +159,11 @@ uv run pytest --cov=src --cov-report=html
 
 The project maintains high code quality standards:
 
-- **Type Checking**: Strict Pyright type checking
-- **Linting**: Comprehensive Ruff rules
-- **Formatting**: Automated with Ruff formatter
-- **Testing**: 80% minimum coverage requirement
-- **Security**: Regular security scanning
+-   **Type Checking**: Strict Pyright type checking
+-   **Linting**: Comprehensive Ruff rules
+-   **Formatting**: Automated with Ruff formatter
+-   **Testing**: 80% minimum coverage requirement
+-   **Security**: Regular security scanning
 
 ## Interface Types
 
@@ -180,10 +177,11 @@ INTERFACE_TYPE=cli uv run python -m clean_interfaces.main
 ```
 
 Features:
-- Interactive command-line interface
-- Rich terminal output
-- Help documentation
-- Command completion
+
+-   Interactive command-line interface
+-   Rich terminal output
+-   Help documentation
+-   Command completion
 
 ### REST API Interface
 
@@ -195,27 +193,30 @@ INTERFACE_TYPE=restapi uv run python -m clean_interfaces.main
 ```
 
 Features:
-- OpenAPI documentation
-- Automatic request validation
-- JSON responses
-- Async support
+
+-   OpenAPI documentation
+-   Automatic request validation
+-   JSON responses
+-   Async support
 
 ## Logging
 
 The application uses structured logging with multiple output formats:
 
 ### JSON Format (Production)
+
 ```json
 {
-  "timestamp": "2025-07-20T10:30:45.123Z",
-  "level": "info",
-  "logger": "clean_interfaces.app",
-  "message": "Application started",
-  "interface": "cli"
+    "timestamp": "2025-07-20T10:30:45.123Z",
+    "level": "info",
+    "logger": "clean_interfaces.app",
+    "message": "Application started",
+    "interface": "cli"
 }
 ```
 
 ### Console Format (Development)
+
 ```
 2025-07-20 10:30:45 [INFO] clean_interfaces.app: Application started interface=cli
 ```
@@ -226,9 +227,7 @@ When enabled, logs can be exported to OpenTelemetry collectors:
 
 ```bash
 # Enable OTLP export
-OTEL_LOGS_EXPORT_MODE=otlp
-OTEL_ENDPOINT=http://collector:4317
-OTEL_SERVICE_NAME=my-service
+# OpenTelemetry exporter was removed. Trace context may still be included if OTEL is present.
 ```
 
 ## Documentation
@@ -258,11 +257,11 @@ uv run mkdocs serve
 
 ### Development Guidelines
 
-- Follow conventional commits
-- Maintain test coverage above 80%
-- Ensure all type checks pass
-- Update documentation as needed
-- Add tests for new features
+-   Follow conventional commits
+-   Maintain test coverage above 80%
+-   Ensure all type checks pass
+-   Update documentation as needed
+-   Add tests for new features
 
 ### Pre-commit Setup
 
@@ -289,9 +288,9 @@ uv run pre-commit run
 
 The pre-commit hooks use nox to ensure consistency with the project's configuration:
 
-- **ruff format**: Formats code according to `pyproject.toml` settings
-- **ruff lint**: Checks and fixes linting issues based on `pyproject.toml` rules  
-- **pyright**: Type checks the code using project settings
+-   **ruff format**: Formats code according to `pyproject.toml` settings
+-   **ruff lint**: Checks and fixes linting issues based on `pyproject.toml` rules
+-   **pyright**: Type checks the code using project settings
 
 All hooks respect the configuration in `pyproject.toml`, ensuring no divergence between pre-commit and regular development commands.
 
@@ -319,7 +318,7 @@ Enable debug mode in CI by setting `PYTEST_DEBUG=1` environment variable.
 
 ### GitHub Actions Integration
 
-This project includes a GitHub Actions workflow for Claude Code integration (`.github/workflows/claude.yml`). 
+This project includes a GitHub Actions workflow for Claude Code integration (`.github/workflows/claude.yml`).
 
 **⚠️ Current Status (2025-07-20)**: The `claude-code-action@beta` is experiencing issues where the Claude CLI is not properly installed in the GitHub Actions environment. Until Anthropic fixes this issue, the workflow will not function correctly. You can still use Claude Code manually through the web interface.
 
@@ -329,6 +328,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Built with modern Python tooling
-- Inspired by clean architecture principles
-- Designed for extensibility and maintainability
+-   Built with modern Python tooling
+-   Inspired by clean architecture principles
+-   Designed for extensibility and maintainability

@@ -63,7 +63,7 @@ Create a ``.env`` file for persistent configuration:
    INTERFACE_TYPE=cli
    LOG_LEVEL=INFO
    LOG_FORMAT=json
-   OTEL_SERVICE_NAME=my-service
+   # OpenTelemetry exporter was removed; OTEL_* variables are ignored
 
 Multiple Environments
 ~~~~~~~~~~~~~~~~~~~~~
@@ -93,7 +93,7 @@ Development Configuration
    INTERFACE_TYPE=cli
    LOG_LEVEL=DEBUG
    LOG_FORMAT=console
-   OTEL_LOGS_EXPORT_MODE=file
+   # OTEL_LOGS_EXPORT_MODE is ignored
 
 Production Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,9 +105,7 @@ Production Configuration
    LOG_LEVEL=WARNING
    LOG_FORMAT=json
    LOG_FILE_PATH=/var/log/clean-interfaces/app.log
-   OTEL_LOGS_EXPORT_MODE=otlp
-   OTEL_ENDPOINT=http://collector:4317
-   OTEL_SERVICE_NAME=clean-interfaces-prod
+   # OpenTelemetry exporter removed
 
 Logging Examples
 ----------------

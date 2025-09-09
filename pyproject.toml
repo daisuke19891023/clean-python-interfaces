@@ -3,17 +3,13 @@ name = "clean-interfaces"
 version = "0.1.0"
 description = "A test project for verification"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "python-dotenv>=1.0.0",
     "pydantic>=2.9.2",
     "pydantic-settings>=2.9.1",
     "pyyaml>=6.0.2",
     "structlog>=24.1.0",
-    "opentelemetry-api>=1.20.0",
-    "opentelemetry-sdk>=1.20.0",
-    "opentelemetry-instrumentation>=0.41b0",
-    "opentelemetry-exporter-otlp>=1.20.0",
     "fastapi>=0.116.1",
     "uvicorn>=0.30.0",
     "typer>=0.16.0",
@@ -85,7 +81,7 @@ exclude = [
 ]
 line-length = 88
 indent-width = 4
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = ["ALL"]

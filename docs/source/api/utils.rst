@@ -30,7 +30,4 @@ File Handler Module
 OpenTelemetry Exporter
 ----------------------
 
-.. automodule:: clean_interfaces.utils.otel_exporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+The OpenTelemetry exporter module has been removed to improve test stability. Logging remains structured and can include trace context when available.

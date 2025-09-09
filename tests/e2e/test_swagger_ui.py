@@ -1,11 +1,11 @@
-"""E2E tests for enhanced Swagger UI functionality."""
+"""E2E tests for Swagger UI functionality."""
 
 import pytest
 from fastapi.testclient import TestClient
 
 
-class TestSwaggerUIEnhancedE2E:
-    """E2E tests for enhanced Swagger UI with dynamic content generation."""
+class TestSwaggerUIE2E:
+    """E2E tests for Swagger UI with dynamic content generation."""
 
     @pytest.fixture
     def client(self, monkeypatch: pytest.MonkeyPatch) -> TestClient:
@@ -27,13 +27,13 @@ class TestSwaggerUIEnhancedE2E:
         # Get the FastAPI app from the interface
         return TestClient(interface.app)
 
-    def test_enhanced_swagger_ui_endpoint(self, client: TestClient) -> None:
-        """Test enhanced Swagger UI endpoint returns HTML with dynamic content."""
+    def test_swagger_ui_endpoint(self, client: TestClient) -> None:
+        """Test Swagger UI endpoint returns HTML with dynamic content."""
         response = client.get("/api/v1/swagger-ui")
         assert response.status_code == 200
         assert response.headers["content-type"].startswith("text/html")
 
-        # Verify enhanced content includes dynamic documentation
+        # Verify content includes dynamic documentation
         content = response.text.lower()
         assert "swagger-ui" in content
         assert "clean interfaces api" in content
@@ -41,8 +41,8 @@ class TestSwaggerUIEnhancedE2E:
         # Verify dynamic content from source code is included
         assert "interface" in content or "restapi" in content
 
-    def test_enhanced_swagger_ui_json_schema(self, client: TestClient) -> None:
-        """Test enhanced Swagger UI JSON schema endpoint with dynamic content."""
+    def test_swagger_ui_json_schema(self, client: TestClient) -> None:
+        """Test Swagger UI JSON schema endpoint with dynamic content."""
         response = client.get("/api/v1/swagger-ui/schema")
         assert response.status_code == 200
         assert response.headers["content-type"] == "application/json"
@@ -52,14 +52,14 @@ class TestSwaggerUIEnhancedE2E:
         assert "paths" in schema
         assert "components" in schema
 
-        # Verify enhanced metadata from dynamic content generation
+        # Verify metadata from dynamic content generation
         assert schema["info"]["title"] == "Clean Interfaces API"
         assert "dynamic_content" in schema["info"]
         assert schema["info"]["dynamic_content"]["source_files_analyzed"] > 0
         assert schema["info"]["dynamic_content"]["documentation_files_found"] > 0
 
-    def test_enhanced_swagger_ui_with_source_analysis(self, client: TestClient) -> None:
-        """Test that enhanced Swagger UI includes analysis from source code."""
+    def test_swagger_ui_with_source_analysis(self, client: TestClient) -> None:
+        """Test that Swagger UI includes analysis from source code."""
         response = client.get("/api/v1/swagger-ui/analysis")
         assert response.status_code == 200
 
@@ -80,18 +80,18 @@ class TestSwaggerUIEnhancedE2E:
         assert any("health" in model.lower() for model in models)
 
     def test_complete_swagger_ui_workflow(self, client: TestClient) -> None:
-        """Test complete workflow from analysis to enhanced UI generation."""
+        """Test complete workflow from analysis to UI generation."""
         # 1. Get source code analysis
         analysis_response = client.get("/api/v1/swagger-ui/analysis")
         assert analysis_response.status_code == 200
         analysis = analysis_response.json()
 
-        # 2. Get enhanced schema based on analysis
+        # 2. Get schema based on analysis
         schema_response = client.get("/api/v1/swagger-ui/schema")
         assert schema_response.status_code == 200
         schema = schema_response.json()
 
-        # 3. Get enhanced UI that uses the schema
+        # 3. Get UI that uses the schema
         ui_response = client.get("/api/v1/swagger-ui")
         assert ui_response.status_code == 200
 

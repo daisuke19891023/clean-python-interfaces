@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # install uv
 RUN curl -Ls https://astral.sh/uv/install.sh | sh
@@ -8,4 +8,4 @@ COPY pyproject.toml /app/
 RUN uv pip install ".[dev]"  # small; uses uv cache layer
 
 COPY . /app
-CMD ["python", "-m", "myproject.main"] 
+CMD ["python", "-m", "myproject.main"]

@@ -1,13 +1,14 @@
 # Logging Guide
 
-Clean Interfaces provides comprehensive logging capabilities with structured logging, multiple output formats, and OpenTelemetry integration.
+Clean Interfaces provides comprehensive logging capabilities with structured logging and multiple output formats.
 
 ## Overview
 
 The logging system is built on:
-- **structlog**: For structured logging with context
-- **OpenTelemetry**: For distributed tracing and log export
-- **Multiple formats**: JSON, console, and custom formatters
+
+-   **structlog**: For structured logging with context
+-   **OpenTelemetry (optional)**: For distributed tracing context only; exporter integration removed
+-   **Multiple formats**: JSON, console, and custom formatters
 
 ## Basic Configuration
 
@@ -35,31 +36,15 @@ class MyComponent(BaseComponent):
     def process(self, item_id: str) -> None:
         # Logs include component context automatically
         self.logger.info("processing_item", item_id=item_id)
-        
+
         # Add temporary context
         log = self.logger.bind(user_id="user123")
         log.info("user_action", action="update")
 ```
 
-## OpenTelemetry Integration
+## OpenTelemetry Context (optional)
 
-Enable OpenTelemetry export for distributed tracing:
-
-```bash
-# Enable OpenTelemetry export
-export OTEL_EXPORT_ENABLED=true
-
-# Configure export modes
-export OTEL_EXPORT_MODE=file  # file, otlp, or both
-
-# File export
-export OTEL_LOG_FILE=/path/to/otel.log
-
-# OTLP export
-export OTEL_ENDPOINT=http://localhost:4317
-export OTEL_HEADERS="api-key=your-key"
-export OTEL_TIMEOUT=30
-```
+If OpenTelemetry is installed and tracing is active, trace context (trace_id/span_id) may be included in logs. No exporter is configured by the project.
 
 ## Log Formats
 
@@ -69,13 +54,13 @@ Best for production and log aggregation:
 
 ```json
 {
-  "timestamp": "2025-01-20T12:00:00.123Z",
-  "level": "info",
-  "logger": "clean_interfaces.app",
-  "message": "Application started",
-  "component": "Application",
-  "trace_id": "abc123",
-  "span_id": "def456"
+    "timestamp": "2025-01-20T12:00:00.123Z",
+    "level": "info",
+    "logger": "clean_interfaces.app",
+    "message": "Application started",
+    "component": "Application",
+    "trace_id": "abc123",
+    "span_id": "def456"
 }
 ```
 
@@ -108,7 +93,7 @@ Exceptions are automatically logged with full context:
 try:
     risky_operation()
 except Exception as e:
-    self.logger.error("operation_failed", 
+    self.logger.error("operation_failed",
                      error=str(e),
                      error_type=type(e).__name__)
     raise
@@ -119,11 +104,12 @@ except Exception as e:
 1. **Use structured logging**: Pass data as keyword arguments, not in messages
 2. **Add context**: Use `bind()` to add request IDs, user IDs, etc.
 3. **Log at appropriate levels**:
-   - DEBUG: Detailed diagnostic information
-   - INFO: General informational messages
-   - WARNING: Warning messages for recoverable issues
-   - ERROR: Error messages for failures
-   - CRITICAL: Critical failures requiring immediate attention
+
+    - DEBUG: Detailed diagnostic information
+    - INFO: General informational messages
+    - WARNING: Warning messages for recoverable issues
+    - ERROR: Error messages for failures
+    - CRITICAL: Critical failures requiring immediate attention
 
 4. **Avoid logging sensitive data**: Never log passwords, tokens, or PII
 5. **Use consistent field names**: Standardize on field names across the application
@@ -132,13 +118,13 @@ except Exception as e:
 
 The logging system integrates with various monitoring solutions:
 
-- **ELK Stack**: JSON logs can be ingested by Elasticsearch
-- **Datadog**: OpenTelemetry export to Datadog agent
-- **Jaeger**: Distributed tracing with OTLP export
-- **Local Development**: File-based logs for debugging
+-   **ELK Stack**: JSON logs can be ingested by Elasticsearch
+-   **Datadog**: OpenTelemetry export to Datadog agent
+-   **Jaeger**: Distributed tracing with OTLP export
+-   **Local Development**: File-based logs for debugging
 
 ## Next Steps
 
-- Configure [Environment Variables](environment.md) for your deployment
-- Learn about the [REST API](restapi.md) logging features
-- Explore the [API Reference](../api/utils.md) for logging utilities
+-   Configure [Environment Variables](environment.md) for your deployment
+-   Learn about the [REST API](restapi.md) logging features
+-   Explore the [API Reference](../api/utils.md) for logging utilities

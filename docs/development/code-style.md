@@ -5,23 +5,24 @@ This guide defines the coding standards and conventions for the Clean Interfaces
 ## Overview
 
 We prioritize:
-- **Readability**: Code should be easy to understand
-- **Consistency**: Follow established patterns
-- **Type Safety**: Use type hints everywhere
-- **Documentation**: Document public APIs
+
+-   **Readability**: Code should be easy to understand
+-   **Consistency**: Follow established patterns
+-   **Type Safety**: Use type hints everywhere
+-   **Documentation**: Document public APIs
 
 ## Tools
 
 We use these tools to enforce code quality:
 
-- **[Ruff](https://docs.astral.sh/ruff/)**: Linting and formatting
-- **[Pyright](https://github.com/microsoft/pyright)**: Type checking
-- **[Black](https://black.readthedocs.io/)**: Code formatting (via Ruff)
-- **[isort](https://pycqa.github.io/isort/)**: Import sorting (via Ruff)
+-   **[Ruff](https://docs.astral.sh/ruff/)**: Linting and formatting
+-   **[Pyright](https://github.com/microsoft/pyright)**: Type checking
+-   **[Black](https://black.readthedocs.io/)**: Code formatting (via Ruff)
+-   **[isort](https://pycqa.github.io/isort/)**: Import sorting (via Ruff)
 
 ## Python Version
 
-We target Python 3.12+ and use modern Python features:
+We target Python 3.13+ and use modern Python features:
 
 ```python
 # Use modern type hints
@@ -42,10 +43,10 @@ match command:
 
 ### General Rules
 
-- Line length: 88 characters (Black default)
-- Indentation: 4 spaces
-- Use double quotes for strings
-- Add trailing commas in multiline structures
+-   Line length: 88 characters (Black default)
+-   Indentation: 4 spaces
+-   Use double quotes for strings
+-   Add trailing commas in multiline structures
 
 ### Import Organization
 
@@ -81,12 +82,12 @@ def calculate_total(
     discount: float = 0.0,
 ) -> float:
     """Calculate total with tax and discount.
-    
+
     Args:
         items: List of items with 'price' key
         tax_rate: Tax rate as decimal
         discount: Discount amount
-        
+
     Returns:
         Total amount after tax and discount
     """
@@ -98,35 +99,35 @@ def calculate_total(
 # Classes with proper structure
 class OrderProcessor(BaseComponent):
     """Process orders with validation and logging."""
-    
+
     def __init__(self, config: dict[str, Any]) -> None:
         """Initialize processor with configuration.
-        
+
         Args:
             config: Processor configuration
         """
         super().__init__()
         self.config = config
         self._validator = OrderValidator()
-    
+
     def process(self, order: Order) -> ProcessResult:
         """Process a single order.
-        
+
         Args:
             order: Order to process
-            
+
         Returns:
             Processing result
-            
+
         Raises:
             ValidationError: If order is invalid
             ProcessingError: If processing fails
         """
         self.logger.info("processing_order", order_id=order.id)
-        
+
         # Validate order
         self._validator.validate(order)
-        
+
         # Process order
         try:
             result = self._execute_processing(order)
@@ -171,11 +172,11 @@ TConfig = TypeVar("TConfig", bound=BaseModel)
 # Generic classes
 class Repository(Generic[T]):
     """Generic repository for entities."""
-    
+
     def save(self, entity: T) -> T:
         """Save entity."""
         pass
-    
+
     def find_by_id(self, id: int) -> T | None:
         """Find entity by ID."""
         pass
@@ -183,7 +184,7 @@ class Repository(Generic[T]):
 # Protocols for structural typing
 class Processor(Protocol):
     """Protocol for processors."""
-    
+
     def process(self, data: dict[str, Any]) -> dict[str, Any]:
         """Process data."""
         ...
@@ -211,7 +212,7 @@ def process_data(data: dict[str, str]) -> str:
 # Good - when Any is necessary, document why
 def load_plugin(name: str) -> Any:
     """Load plugin dynamically.
-    
+
     Returns Any because plugin types are not known at compile time.
     """
     module = importlib.import_module(name)
@@ -233,10 +234,10 @@ def complex_operation(
     timeout: float | None = None,
 ) -> OperationResult:
     """Perform complex operation on data.
-    
+
     This function processes the input data according to the provided
     configuration. It supports validation and timeout controls.
-    
+
     Args:
         data: List of data items to process. Each item should contain
             'id' and 'value' keys.
@@ -245,18 +246,18 @@ def complex_operation(
             Defaults to True.
         timeout: Maximum time in seconds for the operation. None means
             no timeout. Defaults to None.
-    
+
     Returns:
         OperationResult containing:
             - processed_count: Number of successfully processed items
             - failed_items: List of items that failed processing
             - duration: Total processing time in seconds
-    
+
     Raises:
         ValidationError: If validate=True and data is invalid.
         TimeoutError: If operation exceeds timeout.
         ConfigError: If configuration is invalid.
-    
+
     Example:
         >>> config = Config(mode="fast")
         >>> result = complex_operation(
@@ -266,7 +267,7 @@ def complex_operation(
         ... )
         >>> print(result.processed_count)
         1
-    
+
     Note:
         This operation is CPU-intensive and should be run in a
         background task for large datasets.
@@ -310,7 +311,7 @@ BatchConfig = dict[str, int | float | bool]
 # Good - specific exception types
 def validate_email(email: str) -> None:
     """Validate email format.
-    
+
     Raises:
         ValueError: If email format is invalid
     """
@@ -345,11 +346,11 @@ if user_id not in self.users:
 
 ### General Rules
 
-- **Classes**: PascalCase (`UserProfile`, `OrderProcessor`)
-- **Functions/Methods**: snake_case (`calculate_total`, `get_user`)
-- **Constants**: UPPER_SNAKE_CASE (`MAX_RETRIES`, `DEFAULT_TIMEOUT`)
-- **Private**: Leading underscore (`_internal_method`)
-- **Type Variables**: PascalCase, often prefixed with T (`T`, `TConfig`)
+-   **Classes**: PascalCase (`UserProfile`, `OrderProcessor`)
+-   **Functions/Methods**: snake_case (`calculate_total`, `get_user`)
+-   **Constants**: UPPER_SNAKE_CASE (`MAX_RETRIES`, `DEFAULT_TIMEOUT`)
+-   **Private**: Leading underscore (`_internal_method`)
+-   **Type Variables**: PascalCase, often prefixed with T (`T`, `TConfig`)
 
 ### Descriptive Names
 
@@ -375,13 +376,13 @@ def calculate_compound_interest(
 ```python
 class TestOrderProcessor:
     """Tests for OrderProcessor."""
-    
+
     @pytest.fixture
     def processor(self) -> OrderProcessor:
         """Create processor instance for testing."""
         config = {"max_items": 100}
         return OrderProcessor(config)
-    
+
     @pytest.fixture
     def sample_order(self) -> Order:
         """Create sample order for testing."""
@@ -389,7 +390,7 @@ class TestOrderProcessor:
             id="123",
             items=[{"name": "Widget", "price": 9.99}],
         )
-    
+
     def test_process_valid_order(
         self,
         processor: OrderProcessor,
@@ -397,7 +398,7 @@ class TestOrderProcessor:
     ) -> None:
         """Test processing a valid order."""
         result = processor.process(sample_order)
-        
+
         assert result.status == "completed"
         assert result.order_id == "123"
         assert result.total == 9.99
@@ -481,25 +482,25 @@ Ensure code quality before commits:
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.0
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.8.0
+      hooks:
+          - id: ruff
+            args: [--fix]
+          - id: ruff-format
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-yaml
+          - id: check-added-large-files
 ```
 
 ## See Also
 
-- [Contributing Guide](contributing.md) - How to contribute
-- [Testing Guide](testing.md) - Testing best practices
-- [Ruff Documentation](https://docs.astral.sh/ruff/) - Linter documentation
-- [Pyright Documentation](https://github.com/microsoft/pyright) - Type checker docs
+-   [Contributing Guide](contributing.md) - How to contribute
+-   [Testing Guide](testing.md) - Testing best practices
+-   [Ruff Documentation](https://docs.astral.sh/ruff/) - Linter documentation
+-   [Pyright Documentation](https://github.com/microsoft/pyright) - Type checker docs

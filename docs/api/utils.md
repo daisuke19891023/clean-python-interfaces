@@ -1,6 +1,6 @@
 # Utilities Module
 
-The `utils` module provides utility functions and classes for file handling, logging, OpenTelemetry integration, and settings management.
+The `utils` module provides utility functions and classes for file handling, logging, and settings management.
 
 ## File Handler
 
@@ -13,10 +13,10 @@ from clean_interfaces.utils.file_handler import FileHandler
 
 class FileHandler(BaseComponent):
     """Handle file operations with encoding support."""
-    
+
     def __init__(self, encoding: str = "utf-8") -> None:
         """Initialize with encoding.
-        
+
         Args:
             encoding: Default file encoding
         """
@@ -33,14 +33,14 @@ def read_text(
     encoding: str | None = None
 ) -> str:
     """Read text file.
-    
+
     Args:
         file_path: Path to file
         encoding: Override default encoding
-        
+
     Returns:
         File contents as string
-        
+
     Raises:
         FileNotFoundError: If file doesn't exist
         UnicodeDecodeError: If file encoding is wrong
@@ -58,7 +58,7 @@ def write_text(
     create_parents: bool = True
 ) -> None:
     """Write text file.
-    
+
     Args:
         file_path: Path to file
         content: Content to write
@@ -76,10 +76,10 @@ def read_json(
     encoding: str | None = None
 ) -> dict[str, Any]:
     """Read JSON file.
-    
+
     Returns:
         Parsed JSON data
-        
+
     Raises:
         json.JSONDecodeError: If JSON is invalid
     """
@@ -141,7 +141,7 @@ write_json("data.json", {"key": "value"})
 
 ## Logging
 
-Structured logging configuration with OpenTelemetry support.
+Structured logging configuration. OpenTelemetry exporter integration has been removed; trace context may still be included if OpenTelemetry is present.
 
 ### configure_logging()
 
@@ -152,17 +152,14 @@ def configure_logging(
     level: str = "INFO",
     format: str = "json",
     log_file: Path | None = None,
-    otel_export_enabled: bool = False,
-    otel_exporters: list[LogExporter] | None = None
 ) -> None:
     """Configure structured logging.
-    
+
     Args:
         level: Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         format: Output format ("json" or "console")
         log_file: Optional log file path
-        otel_export_enabled: Enable OpenTelemetry export
-        otel_exporters: Custom OpenTelemetry exporters
+
     """
 ```
 
@@ -173,13 +170,13 @@ from clean_interfaces.utils.logger import get_logger
 
 def get_logger(name: str | None = None) -> BoundLogger:
     """Get a configured logger instance.
-    
+
     Args:
         name: Logger name (defaults to caller's module)
-        
+
     Returns:
         Configured structlog logger
-        
+
     Example:
         logger = get_logger(__name__)
         logger.info("starting", component="MyApp")
@@ -197,68 +194,9 @@ def slow_operation(data: list[int]) -> int:
     return sum(data)
 ```
 
-## OpenTelemetry Exporter
+## OpenTelemetry Exporter (removed)
 
-Export logs to OpenTelemetry collectors.
-
-### LogExporter
-
-```python
-from clean_interfaces.utils.otel_exporter import LogExporter
-
-class LogExporter(ABC):
-    """Abstract base for log exporters."""
-    
-    @abstractmethod
-    def export(self, record: dict[str, Any]) -> None:
-        """Export log record."""
-    
-    @abstractmethod
-    def shutdown(self) -> None:
-        """Cleanup resources."""
-```
-
-### FileLogExporter
-
-```python
-from clean_interfaces.utils.otel_exporter import FileLogExporter
-
-class FileLogExporter(LogExporter):
-    """Export logs to file."""
-    
-    def __init__(self, file_path: Path) -> None:
-        """Initialize with file path."""
-```
-
-### OTLPLogExporter
-
-```python
-from clean_interfaces.utils.otel_exporter import OTLPLogExporter
-
-class OTLPLogExporter(LogExporter):
-    """Export logs to OTLP endpoint."""
-    
-    def __init__(
-        self,
-        endpoint: str,
-        headers: dict[str, str] | None = None,
-        timeout: int = 30
-    ) -> None:
-        """Initialize with endpoint configuration."""
-```
-
-### create_exporters()
-
-```python
-from clean_interfaces.utils.otel_exporter import create_exporters
-
-def create_exporters(settings: LoggingSettings) -> list[LogExporter]:
-    """Create exporters from settings.
-    
-    Returns:
-        List of configured exporters
-    """
-```
+The OpenTelemetry exporter components were removed to improve stability. Logs can still include trace context if OTEL tracing is active.
 
 ## Settings
 
@@ -271,7 +209,7 @@ from clean_interfaces.utils.settings import LoggingSettings
 
 class LoggingSettings(BaseSettings):
     """Logging configuration settings."""
-    
+
     log_level: str = Field(default="INFO")
     log_format: str = Field(default="json")
     log_file: Path | None = Field(default=None)
@@ -281,7 +219,7 @@ class LoggingSettings(BaseSettings):
     otel_endpoint: str | None = Field(default=None)
     otel_headers: str | None = Field(default=None)
     otel_timeout: int = Field(default=30, ge=1, le=300)
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8"
@@ -295,7 +233,7 @@ from clean_interfaces.utils.settings import InterfaceSettings
 
 class InterfaceSettings(BaseSettings):
     """Interface configuration settings."""
-    
+
     interface_type: InterfaceType = Field(
         default=InterfaceType.CLI,
         description="Type of interface to use"
@@ -309,7 +247,7 @@ from clean_interfaces.utils.settings import get_logging_settings
 
 def get_logging_settings() -> LoggingSettings:
     """Get logging settings (singleton).
-    
+
     Returns:
         Cached logging settings instance
     """
@@ -322,7 +260,7 @@ from clean_interfaces.utils.settings import get_interface_settings
 
 def get_interface_settings() -> InterfaceSettings:
     """Get interface settings (singleton).
-    
+
     Returns:
         Cached interface settings instance
     """
@@ -341,7 +279,7 @@ with FileHandler(encoding="utf-8") as handler:
     text = handler.read_text("input.txt")
     data = handler.read_json("config.json")
     config = handler.read_yaml("settings.yaml")
-    
+
     # Write operations
     handler.write_text("output.txt", "Hello World")
     handler.write_json("data.json", {"key": "value"})
@@ -393,6 +331,6 @@ configure_logging(
 
 ## See Also
 
-- [Logging Guide](../guides/logging.md) - Detailed logging configuration
-- [Environment Variables](../guides/environment.md) - Settings configuration
-- **Base Components** - Component base classes in the base module
+-   [Logging Guide](../guides/logging.md) - Detailed logging configuration
+-   [Environment Variables](../guides/environment.md) - Settings configuration
+-   **Base Components** - Component base classes in the base module

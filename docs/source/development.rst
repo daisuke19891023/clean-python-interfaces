@@ -29,12 +29,12 @@ Running Tests
 
     # Run all tests
     nox -s test
-    
+
     # Run specific test types
     nox -s test_unit
     nox -s test_api
     nox -s test_e2e
-    
+
     # Run with coverage
     nox -s coverage
 
@@ -45,13 +45,13 @@ Code Quality
 
     # Run linting
     nox -s lint
-    
+
     # Format code
     nox -s format_code
-    
+
     # Type checking
     nox -s typing
-    
+
     # All CI checks
     nox -s ci
 
@@ -67,7 +67,7 @@ Contribution Guidelines
 Coding Standards
 ----------------
 
-* Use Python 3.12+ type hints
+* Use Python 3.13+ type hints
 * Follow PEP 8 style guide
 * Write comprehensive tests
 * Document all public APIs
