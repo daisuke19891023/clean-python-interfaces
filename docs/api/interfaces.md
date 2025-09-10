@@ -148,6 +148,55 @@ python -m clean_interfaces.main
 uvicorn clean_interfaces.main:app --reload
 ```
 
+## MCP Interface
+
+### MCPInterface
+
+MCP (Model Context Protocol) implementation using FastMCP.
+
+```python
+from clean_interfaces.interfaces.mcp import MCPInterface
+
+class MCPInterface(BaseInterface):
+    """MCP interface implementation."""
+
+    def __init__(self) -> None:
+        """Initialize MCP interface with FastMCP app."""
+        self.mcp = FastMCP(
+            name="clean-interfaces-mcp",
+            title="Clean Interfaces MCP",
+            description="A clean interface MCP implementation",
+            version="1.0.0",
+        )
+        self._setup_commands()
+```
+
+#### Features
+
+- Standardized communication with LLMs
+- Tool and resource discovery
+- Asynchronous operation support
+
+#### Tools
+
+##### welcome
+
+```python
+@mcp.tool()
+def welcome() -> str:
+    """Display welcome message."""
+```
+
+Returns a welcome message string.
+
+#### Usage
+
+```bash
+# Run MCP interface
+export INTERFACE_TYPE=mcp
+python -m clean_interfaces.main
+```
+
 ## Interface Factory
 
 ### create_interface()
@@ -180,6 +229,7 @@ def create_interface(interface_type: InterfaceType) -> BaseInterface:
 
 - `InterfaceType.CLI`: Creates CLIInterface
 - `InterfaceType.RESTAPI`: Creates RestAPIInterface
+- `InterfaceType.MCP`: Creates MCPInterface
 
 ## Usage Examples
 

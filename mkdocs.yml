@@ -39,6 +39,7 @@ nav:
   - User Guide:
       - CLI Interface: guides/cli.md
       - REST API Interface: guides/restapi.md
+      - MCP Interface: guides/mcp.md
       - Logging: guides/logging.md
       - Environment Variables: guides/environment.md
   - API Reference:
