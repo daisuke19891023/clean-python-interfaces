@@ -8,3 +8,4 @@ class InterfaceType(str, Enum):
 
     CLI = "cli"
     RESTAPI = "restapi"
+    MCP = "mcp"

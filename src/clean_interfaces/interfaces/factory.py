@@ -5,6 +5,7 @@ from clean_interfaces.utils.settings import get_interface_settings
 
 from .base import BaseInterface
 from .cli import CLIInterface
+from .mcp import MCPInterface
 from .restapi import RestAPIInterface
 
 
@@ -28,6 +29,8 @@ class InterfaceFactory:
             return CLIInterface()
         if interface_type == InterfaceType.RESTAPI:
             return RestAPIInterface()
+        if interface_type == InterfaceType.MCP:
+            return MCPInterface()
 
         msg = f"Unknown interface type: {interface_type}"
         raise ValueError(msg)

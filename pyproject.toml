@@ -13,6 +13,7 @@ dependencies = [
     "fastapi>=0.116.1",
     "uvicorn>=0.30.0",
     "typer>=0.16.0",
+    "fastmcp>=2.12.2",
 ] # Populated by user or later steps if needed
 
 [project.scripts]
@@ -35,6 +36,7 @@ dev = [
     "pytest-xdist>=3.5.0",
     "responses>=0.25.3",
     "pexpect>=4.9.0",
+    "pytest-asyncio>=0.23.0",
     "diff-cover>=8.0.0",
     "commitizen>=3.20.0",
     "python-semantic-release>=8.10.0",
@@ -149,7 +151,8 @@ testpaths = ["tests"]
 addopts = "-v -ra --strict-markers" # This will be replaced by setup.sh
 markers = [
   "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-  "integration: marks integration tests"
+  "integration: marks integration tests",
+  "asyncio: marks tests as asyncio"
 ]
 
 [dependency-groups]
