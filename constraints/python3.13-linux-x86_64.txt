@@ -279,7 +279,7 @@ py-serializable==2.1.0
     # via cyclonedx-python-lib
 py-spy==0.4.1
     # via clean-interfaces (pyproject.toml)
-pycparser==2.22
+pycparser==2.23
     # via cffi
 pydantic==2.11.7
     # via
