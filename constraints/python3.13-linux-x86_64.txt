@@ -313,7 +313,7 @@ pytest==8.4.2
     #   pytest-cov
     #   pytest-mock
     #   pytest-xdist
-pytest-cov==6.3.0
+pytest-cov==7.0.0
     # via clean-interfaces (pyproject.toml)
 pytest-mock==3.15.0
     # via clean-interfaces (pyproject.toml)
