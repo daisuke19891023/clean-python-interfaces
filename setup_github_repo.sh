@@ -31,13 +31,93 @@ check_gh_installed_and_auth() {
   fi
   echo "✅ gh CLI is installed."
 
-  # Check gh auth status
+  # Check gh auth status; if not logged in, attempt login and return to script after
   if ! gh auth status &> /dev/null; then
-    echo "❌ ERROR: You are not logged into GitHub CLI."
-    echo "   Please run 'gh auth login' to authenticate, then try running this script again."
-    exit 1
+    echo "ℹ️  You are not logged into GitHub CLI. Starting 'gh auth login'..."
+    echo "   Tip: We'll use the device flow. Follow the on-screen instructions to authenticate."
+    # Try to log in using device flow; if this fails, fall back to original error message
+    if gh auth login --hostname github.com --git-protocol https --device; then
+      if gh auth status &> /dev/null; then
+        echo "✅ Authenticated with GitHub CLI."
+      else
+        echo "❌ ERROR: You are not logged into GitHub CLI."
+        echo "   Please run 'gh auth login' to authenticate, then try running this script again."
+        exit 1
+      fi
+    else
+      echo "❌ ERROR: You are not logged into GitHub CLI."
+      echo "   Please run 'gh auth login' to authenticate, then try running this script again."
+      exit 1
+    fi
+  else
+    echo "✅ Authenticated with GitHub CLI."
   fi
-  echo "✅ Authenticated with GitHub CLI."
+}
+
+# Ensure global git user.name and user.email are configured; prompt if missing
+ensure_git_config() {
+  echo ""
+  echo "🔧 Checking global git configuration (user.name and user.email)..."
+
+  local current_name
+  local current_email
+  current_name=$(git config --global --get user.name 2>/dev/null || true)
+  current_email=$(git config --global --get user.email 2>/dev/null || true)
+
+  # If running in a non-interactive environment (stdin not a TTY), try to set from env vars
+  if [[ -z "$current_name" || -z "$current_email" ]]; then
+    if [ ! -t 0 ]; then
+      local env_name
+      local env_email
+      env_name="${GIT_USER_NAME:-${GIT_AUTHOR_NAME:-}}"
+      env_email="${GIT_USER_EMAIL:-${GIT_AUTHOR_EMAIL:-}}"
+      if [[ -z "$current_name" && -n "$env_name" ]]; then
+        git config --global user.name "$env_name" && echo "✅ Set git global user.name from environment to '$env_name'"
+        current_name="$env_name"
+      fi
+      if [[ -z "$current_email" && -n "$env_email" && "$env_email" == *"@"* ]]; then
+        git config --global user.email "$env_email" && echo "✅ Set git global user.email from environment to '$env_email'"
+        current_email="$env_email"
+      fi
+      if [[ -z "$current_name" || -z "$current_email" ]]; then
+        echo "ℹ️  Non-interactive environment detected; skipping prompts for git config."
+        echo "   Set them later with: git config --global user.name 'Your Name'; git config --global user.email 'you@example.com'"
+      fi
+      return 0
+    fi
+  fi
+
+  if [[ -z "$current_name" ]]; then
+    echo "ℹ️  Global git user.name is not set."
+    while true; do
+      read -p "👤 Enter your global git user.name: " input_name
+      if [[ -n "$input_name" ]]; then
+        git config --global user.name "$input_name"
+        echo "✅ Set git global user.name to '$input_name'"
+        break
+      else
+        echo "❌ user.name cannot be empty. Please try again."
+      fi
+    done
+  else
+    echo "✅ git global user.name is set to '$current_name'"
+  fi
+
+  if [[ -z "$current_email" ]]; then
+    echo "ℹ️  Global git user.email is not set."
+    while true; do
+      read -p "✉️  Enter your global git user.email: " input_email
+      if [[ -n "$input_email" && "$input_email" == *"@"* ]]; then
+        git config --global user.email "$input_email"
+        echo "✅ Set git global user.email to '$input_email'"
+        break
+      else
+        echo "❌ Please enter a valid-looking email (must contain '@')."
+      fi
+    done
+  else
+    echo "✅ git global user.email is set to '$current_email'"
+  fi
 }
 
 # Function to get repository information
@@ -217,6 +297,7 @@ enable_automated_security_fixes() {
 
 # --- Main script execution ---
 check_gh_installed_and_auth
+ensure_git_config
 get_repo_info
 detect_project_type
 
