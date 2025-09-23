@@ -74,15 +74,21 @@ Human-readable format for development:
 
 ## Performance Logging
 
-Use the performance decorator for timing operations:
+Use the performance decorators for timing (and optional memory) metrics:
 
 ```python
 from clean_interfaces.utils.logger import log_performance
+from clean_interfaces.utils.profiler import profile
 
-@log_performance
+# Simple timing with existing logger
+@log_performance(logger)
 def slow_operation(data: list[str]) -> dict[str, int]:
-    # Function execution time is automatically logged
     return process_data(data)
+
+# Full profiler with optional memory and span creation
+@profile(record_memory=True, create_span=True)
+def heavy_operation(items: list[bytes]) -> int:
+    return sum(len(b) for b in items)
 ```
 
 ## Error Logging
