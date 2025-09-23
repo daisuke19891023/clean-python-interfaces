@@ -40,7 +40,7 @@ if [ -f "pyproject.toml" ]; then
 
     # 新しい仮想環境を作成
     echo "Creating Python virtual environment..."
-    uv venv --python 3.12
+    uv venv .venv
     
     # 仮想環境の権限を設定
     sudo chown -R node:node .venv
@@ -63,8 +63,12 @@ fi
 
 # Check if this is a Node.js project (has package.json)
 if [ -f "package.json" ]; then
-    echo "Node.js project detected. Installing npm dependencies..."
-    npm install
+    echo "Node.js project detected. Installing npm dependencies with ci..."
+    if [ ! -f package-lock.json ]; then
+      echo "package-lock.json not found. Generating lockfile only..."
+      npm install --package-lock-only || true
+    fi
+    npm ci || npm install
 else
     echo "No package.json found. Skipping npm dependencies."
 fi

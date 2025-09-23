@@ -1,18 +1,4 @@
 {
-  "name": "AI CLI DevContainer",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
-  "updateContentCommand": "npm install --package-lock-only || true",
-  "postCreateCommand": "npm ci",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode"
-      ]
-    }
-  }
-}
-{
   "name": "clean-interfaces",
   "build": {
     "dockerfile": "../Dockerfile",
@@ -21,6 +7,11 @@
   "remoteUser": "root",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -51,6 +42,6 @@
       }
     }
   },
-  "postCreateCommand": "bash -lc 'if [ ! -d .venv ]; then uv venv .venv; fi && . .venv/bin/activate && uv pip install -e .[dev]'",
+  "postCreateCommand": "bash -lc '.devcontainer/postCreateCommand.sh'",
   "postAttachCommand": "bash -lc '.devcontainer/select-editor.sh'"
 }

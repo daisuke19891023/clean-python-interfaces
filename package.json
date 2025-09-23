@@ -5,9 +5,9 @@
   "description": "Devcontainer setup installing gemini-cli, codex, and claude-code via npm ci",
   "license": "MIT",
   "type": "module",
-  "dependencies": {
-    "gemini-cli": "github:google-gemini/gemini-cli",
-    "codex": "github:openai/codex",
-    "claude-code": "github:anthropics/claude-code"
+  "devDependencies": {
+    "gemini-cli": "github:google-gemini/gemini-cli#c93eed6384a73489b46c3015a278c88a508c410d",
+    "codex": "github:openai/codex#c93e77b68b49562a46e7dc47b3eb529942e078b0",
+    "claude-code": "github:anthropics/claude-code#d8841efb1da4e75a9913ef3f9be9bf03b5d0e1d5"
   }
 }
