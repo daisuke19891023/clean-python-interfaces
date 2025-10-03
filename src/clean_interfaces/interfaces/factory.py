@@ -41,7 +41,18 @@ class InterfaceFactory:
         Returns:
             BaseInterface: The created interface instance
 
+        Raises:
+            ValueError: If the interface type from settings is invalid
+
         """
         settings = get_interface_settings()
-        interface_type = InterfaceType(settings.interface_type)
+        try:
+            # Ensure settings.interface_type is properly converted to InterfaceType
+            if isinstance(settings.interface_type, InterfaceType):
+                interface_type = settings.interface_type
+            else:
+                interface_type = InterfaceType(settings.interface_type)
+        except (ValueError, KeyError) as e:
+            msg = f"Invalid interface type in settings: {settings.interface_type}"
+            raise ValueError(msg) from e
         return self.create(interface_type)
