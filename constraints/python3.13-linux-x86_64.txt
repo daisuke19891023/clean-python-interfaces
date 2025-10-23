@@ -42,7 +42,7 @@ charset-normalizer==3.4.3
     # via
     #   commitizen
     #   requests
-click==8.1.8
+click==8.3.0
     # via
     #   click-option-group
     #   hatch
