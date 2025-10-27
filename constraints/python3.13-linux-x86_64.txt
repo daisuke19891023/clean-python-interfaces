@@ -305,7 +305,7 @@ pyparsing==3.2.3
     # via pip-requirements-parser
 pyproject-hooks==1.2.0
     # via pdm
-pyright==1.1.405
+pyright==1.1.407
     # via clean-interfaces (pyproject.toml)
 pytest==8.4.2
     # via
