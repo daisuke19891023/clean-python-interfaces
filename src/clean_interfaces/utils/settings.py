@@ -50,6 +50,27 @@ class LoggingSettings(BaseSettings):
         description="Path to log file for local file logging",
     )
 
+    # Profiler settings
+    profiler_enabled: bool = Field(
+        default=False,
+        description=(
+            "Enable profiling globally. If False, profiling still activates when "
+            "log_level is DEBUG."
+        ),
+    )
+    profiler_collect_memory: bool = Field(
+        default=False,
+        description=(
+            "Collect memory metrics (RSS via psutil/resource, Python allocations via tracemalloc)."
+        ),
+    )
+    profiler_create_spans: bool = Field(
+        default=False,
+        description=(
+            "Create OpenTelemetry spans around profiled function execution when OTEL is available."
+        ),
+    )
+
     # OpenTelemetry settings
     otel_logs_export_mode: OTelExportMode = Field(
         default=OTelExportMode.FILE,
@@ -106,10 +127,19 @@ class LoggingSettings(BaseSettings):
         """Check if OpenTelemetry export is enabled."""
         return self.otel_logs_export_mode in (OTelExportMode.OTLP, OTelExportMode.BOTH)
 
+    @property
+    def profiler_active(self) -> bool:
+        """Whether profiler should be active based on settings and log level.
+
+        Active if explicitly enabled or when log level is DEBUG.
+        """
+        return bool(self.profiler_enabled or self.log_level == "DEBUG")
+
     def model_dump(self, **kwargs: Any) -> dict[str, Any]:
         """Dump model including computed properties."""
         data = super().model_dump(**kwargs)
         data["otel_export_enabled"] = self.otel_export_enabled
+        data["profiler_active"] = self.profiler_active
         return data
 
 

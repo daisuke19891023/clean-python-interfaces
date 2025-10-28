@@ -188,10 +188,21 @@ def get_logger(name: str | None = None) -> BoundLogger:
 ```python
 from clean_interfaces.utils.logger import log_performance
 
-@log_performance
+@log_performance(logger)
 def slow_operation(data: list[int]) -> int:
-    """Decorator logs function execution time."""
+    """Decorator logs function execution time using provided logger."""
     return sum(data)
+```
+
+### profile
+
+```python
+from clean_interfaces.utils.profiler import profile
+
+@profile(record_memory=True, create_span=False)
+def compute(values: list[int]) -> int:
+    """Record execution time and optional memory metrics."""
+    return sum(values)
 ```
 
 ## OpenTelemetry Exporter (removed)
