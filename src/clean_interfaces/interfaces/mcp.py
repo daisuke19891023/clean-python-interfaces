@@ -15,6 +15,7 @@ class MCPInterface(BaseInterface):
         super().__init__()
         self.mcp = FastMCP(name="clean-interfaces-mcp")
         self._setup_commands()
+        self.logger.info("MCP interface initialized")
 
     @property
     def name(self) -> str:
