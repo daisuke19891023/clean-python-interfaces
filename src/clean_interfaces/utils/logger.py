@@ -20,6 +20,7 @@ import structlog
 from structlog.types import EventDict, Processor
 
 from clean_interfaces.utils.settings import get_settings
+from clean_interfaces.utils.profiler import profile
 
 # Type variables for decorators
 F = TypeVar("F", bound=Callable[..., Any])
@@ -259,7 +260,7 @@ def shutdown_logging() -> None:
 
 
 def log_performance(logger: LoggerProtocol) -> Callable[[F], F]:
-    """Log function performance metrics.
+    """Log function performance metrics using the profiler decorator.
 
     Args:
         logger: Logger instance to use for performance logging
@@ -269,35 +270,7 @@ def log_performance(logger: LoggerProtocol) -> Callable[[F], F]:
 
     """
 
-    def decorator(func: F) -> F:
-        @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            start_time = time.perf_counter()
-            exception_info = None
-
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                exception_info = f"{type(e).__name__}: {e}"
-                raise
-            finally:
-                end_time = time.perf_counter()
-                duration_ms = (end_time - start_time) * 1000
-
-                log_data = {
-                    "function_name": func.__name__,
-                    "duration_ms": round(duration_ms, 3),
-                }
-
-                if exception_info:
-                    log_data["exception"] = exception_info
-                    logger.error("Function execution failed", **log_data)
-                else:
-                    logger.info("Function execution completed", **log_data)
-
-        return wrapper  # type: ignore[return-value]
-
-    return decorator
+    return profile(logger=logger, record_memory=None, create_span=None)
 
 
 # Convenience function for common usage patterns
