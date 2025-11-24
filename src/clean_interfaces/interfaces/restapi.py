@@ -48,9 +48,9 @@ class RestAPIInterface(BaseInterface):
         self.logger.info("Setting up API routes")
 
         @self.app.get("/", response_class=RedirectResponse)
-        async def root() -> str:  # type: ignore[misc]
+        async def root() -> RedirectResponse:  # type: ignore[misc]
             """Redirect root to API documentation."""
-            return "/docs"  # type: ignore[return-value]
+            return RedirectResponse(url="/docs")  # type: ignore[return-value]
 
         @self.app.get("/health", response_model=HealthResponse)
         async def health() -> HealthResponse:  # type: ignore[misc]

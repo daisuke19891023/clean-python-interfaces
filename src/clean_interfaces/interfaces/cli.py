@@ -24,6 +24,7 @@ class CLIInterface(BaseInterface):
             add_completion=False,
         )
         self._setup_commands()
+        self.logger.info("CLI interface initialized")
 
     @property
     def name(self) -> str:
@@ -43,8 +44,13 @@ class CLIInterface(BaseInterface):
         # Add a callback that shows welcome when no command is specified
         self.app.callback(invoke_without_command=True)(self._main_callback)
 
-    def _main_callback(self, ctx: typer.Context) -> None:  # pragma: no cover
-        """Run when no subcommand is provided."""
+    def _main_callback(self, ctx: typer.Context) -> None:
+        """Run when no subcommand is provided.
+        
+        Args:
+            ctx: The Typer context containing command invocation information
+            
+        """
         if ctx.invoked_subcommand is None:
             self.welcome()
             # Ensure we exit cleanly after showing welcome
@@ -61,5 +67,6 @@ class CLIInterface(BaseInterface):
 
     def run(self) -> None:
         """Run the CLI interface."""
+        self.logger.info("Starting CLI interface")
         # Let Typer handle the command parsing
         self.app()
